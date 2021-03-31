@@ -34,7 +34,7 @@ if ~exist('solver','var'); solver = []; end
 
 %-- Get Tikhonov smoothing matrix ----------------------------------------%
 if all(size(order_L)==[1,1]) % if order is specified, build Lpr0
-    Lpr0 = invert1d.tikhonov_lpr(...
+    Lpr0 = invert.tikhonov_lpr(...
         order_L,x_length);
 else % is Lpr0 strucutre is provided directly
     Lpr0 = order_L;

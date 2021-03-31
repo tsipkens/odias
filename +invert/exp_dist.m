@@ -30,7 +30,7 @@ if ~exist('solver','var'); solver = []; end % if computation method not specifie
 %--------------------------------------------------------------%
 
 
-Lpr0 = invert1d.exp_dist_lpr(ld,vec);
+Lpr0 = invert.exp_dist_lpr(ld,vec);
     % use external function to evaluate prior covariance
 Lpr = lambda.*Lpr0;
 

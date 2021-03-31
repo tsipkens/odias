@@ -1,6 +1,6 @@
 
-% MAIN_1D  Considers simulations of 1D inversion of aerosol distributions.
-% Author: Timothy Sipkens, 2020-04-11
+% MAIN  Considers simulations of 1D inversion of aerosol distributions.
+% AUTHOR: Timothy Sipkens, 2020-04-11
 %=========================================================================%
 
 addpath cmap;
@@ -37,7 +37,7 @@ hold off;
 %-- 1st order Tikhonov ----%
 disp('Performing Tikhonov...');
 lambda_tk1 = 2e1;
-[x_tk1,~,~,Gpo_inv_tk1] = invert1d.tikhonov(Lb*A,Lb*b,lambda_tk1,1);
+[x_tk1,~,~,Gpo_inv_tk1] = invert.tikhonov(Lb*A,Lb*b,lambda_tk1,1);
 Gpo_tk1 = inv(Gpo_inv_tk1);
 disp('Complete.');
 disp(' ');
@@ -47,7 +47,7 @@ disp(' ');
 disp('Performing exponential distance...');
 lambda_ed = 5e0;
 ld = 1.1.*log10(s_d);
-[x_ed,~,~,Gpo_inv_ed] = invert1d.exp_dist(Lb*A,Lb*b,lambda_ed,ld,d);
+[x_ed,~,~,Gpo_inv_ed] = invert.exp_dist(Lb*A,Lb*b,lambda_ed,ld,d);
 Gpo_ed = inv(Gpo_inv_ed);
 disp('Complete.');
 disp(' ');
