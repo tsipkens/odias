@@ -70,7 +70,7 @@ if opts.diffusion
             sigma_star = sqrt(((kb*prop.T)/(z*e*V))*prop.G_DMA); % Stolzenburg Manuscript Equation 20
             sigma = sqrt(sigma_star^2.*Zp_tilde); % Stolzenburg Manuscript Equation 19
             
-        case {'olfert','fullydeveloped'} % Olfert laboratory; Fully developed flow, Stolzenburg, 2018
+        case {'olfert', 'fullydeveloped'} % Olfert laboratory; Fully developed flow, Stolzenburg, 2018
             V = (prop.Q_c/(2*pi.*Zp_star.*prop.L)).*log(prop.R2/prop.R1); % Classifier Voltage (TSI DMA 3080 Manual Equation B-5)
             sigma_star = sqrt(((kb*prop.T)./(z.*e*V))*prop.G_DMA); % Stolzenburg Manuscript Equation 20
             sigma = sqrt(sigma_star^2.*Zp_tilde); % Stolzenburg Manuscript Equation 19

@@ -1,8 +1,7 @@
 
 % GEN_DMA  Evaluates the transfer function of a differential mobility analyzer.
-% Author:	Timothy Sipkens, 2020-03-09
 % 
-% Inputs:
+%  INPUTS:
 %   d_star              Particle diameter, measurement set point for DMA [m]
 %   d                   Particle diameter, points in integral, can be vector [m]
 % 
@@ -14,19 +13,20 @@
 %           .solver     Indicates the method by which diffusion is calculated (optional)
 %           .param      String indicated which parameter set to use (see prop_DMA.m)
 %
-% Outputs:
+%  OUTPUTS:
 %   Omega           Transfer function
 %   Zp_tilde        Non-dimensional electrical mobility, vector
-%=========================================================================%
+%  
+%  AUTHOR:	Timothy Sipkens, 2020-03-09
 
-function [Omega] = gen_dma(d_star,d,varargin)
+function [Omega] = gen_dma(d_star, d, varargin)
 
 n_b = length(d_star);
 n_i = length(d);
 
 %== Evaluate particle charging fractions =================================%
 z_vec = (1:3)';
-f_z = sparse(kernel.tfer_charge(d.*1e-9,z_vec)); % get fraction charged for d
+f_z = sparse(kernel.tfer_charge(d.*1e-9, z_vec)); % get fraction charged for d
 n_z = length(z_vec);
 
 
@@ -35,21 +35,22 @@ disp('Computing DMA kernel:');
 Omega = sparse(n_b,n_i);
 tools.textbar([0, n_z, 0, n_b]);
 for kk=1:n_z
-    t0 = zeros(n_b,n_i); % pre-allocate for speed
+    Omega_z = zeros(n_b,n_i);  % pre-allocate for speed
     
-    for ii=1:n_b % loop over d_star
-        t0(ii,:) = kernel.tfer_dma(...
-            d_star(ii).*1e-9,...
-            d.*1e-9,...
+    for ii=1:n_b  % loop over d_star
+        Omega_z(ii,:) = kernel.tfer_dma(...
+            d_star(ii) .* 1e-9,...
+            d .* 1e-9,...
             z_vec(kk),varargin{:});
         
         tools.textbar([ii, n_b, kk, n_z]);
     end
     
-    t0(t0<(1e-7.*max(max(t0)))) = 0;
-        % remove numerical noise in kernel
+    % Remove numerical noise in kernel.
+    Omega_z(Omega_z<(1e-7.*max(max(Omega_z)))) = 0;
     
-    Omega = Omega+f_z(kk,:).*sparse(t0);
+    % Compile with other charge states.
+    Omega = Omega + f_z(kk,:) .* sparse(Omega_z);
 end
 
 disp(' ');

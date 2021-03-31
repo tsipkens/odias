@@ -1,23 +1,23 @@
 
 % TIKHONOV  Performs inversion using various order Tikhonov regularization in 2D.
-% Author:   Timothy Sipkens, 2020-04-11
 %
-% Inputs:
+%  INPUTSs:
 %   A           Model matrix
 %   b           Data
 %   order_L     Order of regularization -OR- 
 %               pre-computed Tikhonov matrix structure
-%                   (OPTIONAL, default is set by tikhonov_lpr)
+%                   (OPTIONAL, default is set by invert.tikhonov_lpr)
 %   xi          Initial guess for solver
 %                   (OPTIONAL, default is zeros)
-%   solver      Solver (OPTIONAL, default is interior-point)
+%   solver      Solver (OPTIONAL, default is 'interior-point')
 %
-% Outputs:
+%  OUTPUTS:
 %   x           Regularized estimate
 %   D           Inverse operator (x = D*[b;0])
 %   Lpr0        Tikhonov matrix structure
 %   Gpo_inv     Inverse of posterior covariance
-%=========================================================================%
+%  
+%  AUTHOR: Timothy Sipkens, 2020-04-11
 
 function [x,D,Lpr0,Gpo_inv] = tikhonov(A,b,lambda,order_L,xi,solver)
 
