@@ -26,7 +26,7 @@ if ~exist('order','var'); order = []; end
 if ~exist('solver','var'); solver = []; end
 
 if ~exist('n','var'); n = []; end
-if isempty(n); n = 70; end % default number of lambda entries to consider
+if isempty(n); n = 80; end % default number of lambda entries to consider
 %-------------------------------------------------------------------------%
 
 lambda = logspace(log10(span(1)),log10(span(2)),n);

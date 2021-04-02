@@ -5,7 +5,7 @@
 
 addpath cmap;
 
-d = logspace(log10(10),log10(1e3),400)';  % reconstruction points
+d = logspace(log10(10),log10(1e3),700)';  % reconstruction points
 d_star = logspace(log10(10),log10(1e3),150)';  % mobility setpoints
 
 prop_dma = kernel.prop_dma;
@@ -26,7 +26,7 @@ x0 = normpdf(log10(d), log10(mu_d), log10(s_d)) + ...
 
 b0 = A * x0;
 
-[b, Lb] = tools.get_noise(b0, 1e3, 1e-6);
+[b, Lb] = tools.get_noise(b0, 1e2, 1e-6);
 
 
 figure(1);
@@ -60,7 +60,7 @@ disp(' ');
 
 %-- 2nd order Tikhonov ----%
 disp('Running Tikhonov (2nd) ...');
-lambda_tk2 = 5e2;
+lambda_tk2 = 7e1;
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...
     invert.tikhonov(Lb*A, Lb*b, lambda_tk2, 2);
 Gpo_tk2 = inv(Gpo_inv_tk2);
@@ -103,4 +103,11 @@ semilogx(d, max(x_ed - 2 .* sqrt(diag(Gpo_ed)),0), '--', 'Color', [0.7,0.7,0.7])
 
 hold off;
 
+
+
+%%
+[a0, a1, a2] = invert.tikhonov_op(Lb*A,Lb*b,[1e-1,1e3],2);
+
+figure(3);
+semilogx([a2.lambda], -[a2.B]);
 
