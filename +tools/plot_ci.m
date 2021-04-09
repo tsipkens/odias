@@ -13,22 +13,32 @@ if ~exist('cm', 'var'); cm = []; end
 if isempty(cm); cm = [1, 0.37, 0.54]; end  % pastel red
 
 % Credible interval limits for plotting.
-x_high = x + 2 .* sqrt(diag(Gpo));
-x_low = max(x - 2 .* sqrt(diag(Gpo)),0);
+x_high2 = x + 2 .* sqrt(diag(Gpo));
+x_low2 = max(x - 2 .* sqrt(diag(Gpo)),0);
+x_high1 = x + sqrt(diag(Gpo));
+x_low1 = max(x - sqrt(diag(Gpo)),0);
 
 % Plot shaded region.
-reg = [x_low; flipud(x_high)];
-fill([d; flipud(d)], reg, cm, 'EdgeColor', 'none');
-alpha(0.12);
+reg = [x_low2; flipud(x_high2)];
+fill([d; flipud(d)], reg, cm, ...
+    'EdgeColor', 'none', 'FaceAlpha', 0.15);
+
 set(gca, 'XScale', 'log');
 hold on;
+
+reg = [x_low1; flipud(x_high1)];
+fill([d; flipud(d)], reg, cm, ...
+    'EdgeColor', 'none', 'FaceAlpha', 0.35);
+
 
 % Plot estimate.
 h = plot(d, x, 'Color', cm, 'LineWidth', 1.5);
 
+
 % Plot credible intervals.
-plot(d, x_high, '--', 'Color', [cm, 0.5]);
-plot(d, x_low, '--', 'Color', [cm, 0.5]);
+% plot(d, x_high2, '--', 'Color', [cm, 0.5]);
+% plot(d, x_low2, '--', 'Color', [cm, 0.5]);
+
 
 % Plot true solution.
 if ~isempty(x0)

@@ -74,7 +74,7 @@ disp(' ');
 
 %-- Exponential distance --%
 disp('Running exponential distance ...');
-lambda_ed = 4e0;
+lambda_ed = 2e0;
 ld = 1.2 .* log10(s_d);
 [x_ed, ~, ~, Gpo_inv_ed] = ...
     invert.exp_dist(Lb*A, Lb*b, lambda_ed, ld, d);
