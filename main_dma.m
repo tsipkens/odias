@@ -16,7 +16,7 @@ A = kernel.gen_dma(d_star, d, prop_dma);
 
 
 mu_d = 200;
-s_d = 1.4;
+s_d = 1.55;
 
 % Unimodal.
 % x0 = normpdf(log10(d), log10(mu_d), log10(s_d));
@@ -27,7 +27,7 @@ x0 = normpdf(log10(d), log10(mu_d), log10(s_d)) + ...
 
 b0 = A * x0;
 
-[b, Lb] = tools.get_noise(b0, 1e2, 1e-6);
+[b, Lb] = tools.get_noise(b0, 1e3, 1e-6);
 
 
 figure(1);
@@ -74,8 +74,8 @@ disp(' ');
 
 %-- Exponential distance --%
 disp('Running exponential distance ...');
-lambda_ed = 2e0;
-ld = 1.2 .* log10(s_d);
+lambda_ed = 4e0;
+ld = log10(s_d);
 [x_ed, ~, ~, Gpo_inv_ed] = ...
     invert.exp_dist(Lb*A, Lb*b, lambda_ed, ld, d);
 Gpo_ed = inv(Gpo_inv_ed);

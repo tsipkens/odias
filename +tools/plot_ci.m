@@ -28,7 +28,7 @@ hold on;
 
 reg = [x_low1; flipud(x_high1)];
 fill([d; flipud(d)], reg, cm, ...
-    'EdgeColor', 'none', 'FaceAlpha', 0.35);
+    'EdgeColor', 'none', 'FaceAlpha', 0.22);
 
 
 % Plot estimate.
@@ -42,10 +42,11 @@ h = plot(d, x, 'Color', cm, 'LineWidth', 1.5);
 
 % Plot true solution.
 if ~isempty(x0)
-    plot(d, x0, 'k--');
+    plot(d, x0, 'k--', 'LineWidth', 1);
 end
 
 hold off;
+axis square;
 
 if nargout==0; clear h; end
 
