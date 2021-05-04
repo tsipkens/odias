@@ -1,5 +1,5 @@
 # ODIAS
-(***O***ne-***D***imensional ***I***nversions of ***A***erosol ***S***ize distributions)
+(***O***ne-***D***imensional ***I***nversion of ***A***erosol ***S***ize distributions)
 
 This Matlab program is designed to invert aerosol size distributions for a range of devices, with a focus on methods in the Bayesian framework. 
 
@@ -14,7 +14,7 @@ This program has two dependences that are included as git submodules:
 As a result, the folders corresponding to these submodules will initially be empty. Their are multiple routes to downloading these submodules. If using git, one can initially clone the repository using 
 
 ```shell
-git clone git://github.com/tsipkens/mat-2d-aerosol-inversion --recurse-submodules
+git clone git://github.com/tsipkens/odias --recurse-submodules
 ```
 
 which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the `cmap/` and `tfer_pma/` folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
