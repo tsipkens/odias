@@ -1,6 +1,8 @@
 # ODIAS
 (***O***ne-***D***imensional ***I***nversion of ***A***erosol ***S***ize distributions)
 
+**NOTE**: This is experimental code and could change drastically at any time. 
+
 This Matlab program is designed to invert aerosol size distributions for a range of devices, with a focus on methods in the Bayesian framework. 
 
 ## Setup
