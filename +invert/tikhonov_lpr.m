@@ -1,33 +1,38 @@
 
-% TIKHONOV_LPR Generates Tikhonov smoothing operators/matrix, L. 
-% Author:   Timothy Sipkens, 2020-04-11
-% 
-% Inputs:
-%   order       Order of the Tikhonov operator
-%   x_length    Length of x vector
-%               (only used if a Grid is not specified for n_grid)
+% TIKHONOV_LPR  Generates Tikhonov matrices/operators. 
+%  
+%  L = tikhonov_lpr(ORDER, X_LENGTH) generates the Tikhonov matrix, L, of
+%  the order specified in ORDER and corresponding to a vector x of length
+%  X_LENGTH, such that L*x = 0.
+%  
+%  ------------------------------------------------------------------------
 %
-% Outputs:
-%   Lpr0        Tikhonov matrix
-%=========================================================================%
+%  ORDER options:
+%   0: 0th order Tikhonov promotes small solutions. 
+%   1: 1st order Tikhonov minimizes the first derivative.
+%   2: 2nd order Tikhonov minimized the second derivative.
+%  
+%  ------------------------------------------------------------------------
+% 
+%  AUTHOR:   Timothy Sipkens, 2020-04-11
 
-function Lpr0 = tikhonov_lpr(order,x_length)
+function L = tikhonov_lpr(order, x_length)
 
-%-- Generate Tikhonov smoothing matrix -----------------------------------%
+% Choose between order of Tikhonov operator to generate.
 switch order
     case 0 % 0th order Tikhonov
-    	Lpr0 = speye(x_length);
+    	L = speye(x_length);
         
     case 1 % 1st order Tikhonov
-        Lpr0 = -speye(x_length);
-        Lpr0 = spdiags(ones(x_length,1),1,Lpr0);
-        Lpr0(end,:) = [];
+        L = -speye(x_length);
+        L = spdiags(ones(x_length, 1), 1, L);
+        L(end,:) = [];
         
     case 2 % 2nd order Tikhonov
-        Lpr0 = -speye(x_length);
-        Lpr0 = spdiags(0.5.*ones(x_length,2),[-1,1],Lpr0);
-        Lpr0(1,:) = [];
-        Lpr0(end,:) = [];
+        L = -speye(x_length);
+        L = spdiags(0.5 .* ones(x_length,2), [-1,1], L);
+        L(1,:) = [];
+        L(end,:) = [];
         
     otherwise
         disp('The specified order of Tikhonov is not available.');
@@ -36,5 +41,5 @@ switch order
 end
 
 end
-%=========================================================================%
+
 
