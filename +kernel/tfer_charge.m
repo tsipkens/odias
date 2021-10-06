@@ -1,16 +1,19 @@
 
-% TFER_CHARGE Calculates the fraction of particles with a specific integer charge.
-% Author: Timothy Sipkens, 2018-12-27
-% Based on code from Buckley et al., J. Aerosol Sci. (2008) and Olfert
-% laboratory at the University of Alberta.
+% TFER_CHARGE  sCalculates the fraction of particles with a specific integer charge.
+%  Based on code from Buckley et al., J. Aerosol Sci. (2008) and Olfert
+%  laboratory at the University of Alberta.
 % 
-% Inputs:
-%   d       Particle diameter [m]
-%   z       Integer particle charge state (optional, default = 0:6)
-%   T       Temperature [K] (optional, default = 298 K)
-%=========================================================================%
+%  INPUTS:
+%   d     Particle diameter [m]
+%   z     Integer particle charge state (optional, default = 0:6)
+%   T     Temperature [K] (optional, default = 298 K)
+%   opt   String that specifies which model to use (optional, default = 'hybrid')
+% 
+%  ------------------------------------------------------------------------
+%  
+%  AUTHOR: Timothy Sipkens, 2018-12-27
 
-function [fn] = tfer_charge(d,z,T,opt)
+function [fn] = tfer_charge(d, z, T, opt)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('T','var')
