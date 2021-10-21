@@ -28,11 +28,8 @@ elseif isempty(z)
     z = 0:6;
 end
 
-if ~exist('opt','var')
-    opt = 'hybrid';
-elseif isempty(z)
-    opt = 'hybrid';
-end
+if ~exist('opt','var'); opt = []; end
+if isempty(opt); opt = 'hybrid'; end
 %-------------------------------------------------------------------------%
 
 

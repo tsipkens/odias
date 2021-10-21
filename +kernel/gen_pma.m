@@ -21,7 +21,7 @@
 %  AUTHOR: Timothy Sipkens, 2021-10-06
 
 
-function [Lambda, prop] = gen_pma(sp, m, d, z, prop, opt)
+function [Lambda, prop] = gen_pma(sp, m, d, z, prop, opt, optz)
 
 
 %-- Parse inputs ---------------------------------------------------------%
@@ -31,7 +31,11 @@ if ~exist('opt','var'); opt = []; end
 % By default, use Taylor series solution baout rc (Case 1C) without diffusion.
 % See Sipkens et al., Aerosol Sci. Technol. (2019) for more information.
 if isempty(opt); opt = '1C'; end
-    
+
+
+% Option for charge state.
+if ~exist('optz','var'); optz = []; end
+
 
 % If not given, import default properties of PMA, 
 % as selected by prop_pma function.
@@ -41,7 +45,7 @@ if isempty(prop); prop = prop_pma(); end
 
 
 % Compute charge state.
-f_z = kernel.tfer_charge(d.*1e-9, z); % get fraction charged for d
+f_z = kernel.tfer_charge(d.*1e-9, z, [], optz); % get fraction charged for d
 
 
 fun = str2func(['tfer_',opt]); % call relevant function from submodule
