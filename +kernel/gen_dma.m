@@ -33,24 +33,20 @@ n_z = length(z_vec);
 %== Evaluate DMA transfer function =======================================%
 disp('Computing DMA kernel:');
 Omega = sparse(n_b,n_i);
-tools.textbar([0, n_z, 0, n_b]);
+tools.textbar([0, n_b]);
 for kk=1:n_z
-    Omega_z = zeros(n_b,n_i);  % pre-allocate for speed
-    
-    for ii=1:n_b  % loop over d_star
-        Omega_z(ii,:) = kernel.tfer_dma(...
-            d_star(ii) .* 1e-9,...
-            d .* 1e-9,...
-            z_vec(kk),varargin{:});
-        
-        tools.textbar([ii, n_b, kk, n_z]);
-    end
+    Omega_z = kernel.tfer_dma(...
+        d_star' .* 1e-9,...
+        d .* 1e-9,...
+        z_vec(kk),varargin{:});
     
     % Remove numerical noise in kernel.
     Omega_z(Omega_z<(1e-7.*max(max(Omega_z)))) = 0;
     
     % Compile with other charge states.
     Omega = Omega + f_z(kk,:) .* sparse(Omega_z);
+    
+    tools.textbar([kk, n_z]);
 end
 
 disp(' ');
