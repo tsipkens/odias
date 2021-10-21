@@ -1,4 +1,5 @@
 
+close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e5), 700)';  % reconstruction points

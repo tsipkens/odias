@@ -3,6 +3,7 @@
 % AUTHOR: Timothy Sipkens, 2020-04-11
 %=========================================================================%
 
+close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
@@ -37,6 +38,7 @@ hold on;
 stairs(d_star2, b, 'b');  % more representative of TSI display
 hold off;
 set(gca, 'XScale', 'log');
+title('Real distribution and data');
 
 
 %%
