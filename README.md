@@ -26,3 +26,19 @@ addpath('tfer_pma', 'cmap');
 ```
 
 For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
+
+----
+
+#### Acknowledgements and credit
+
+This code was primarily written by Timothy Sipkens at the University of British Columbia and the National Research Council of Canada. 
+
+Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][1]. 
+
+We also wish to acknowledge a competing code by Petters available [here][2], which contains regularization tools for aerosol particle size distribution inversion in the Julia language. 
+
+
+
+[1]: https://onlinelibrary.wiley.com/doi/abs/10.1002/pamm.201210310
+[2]: https://github.com/mdpetters/RegularizationTools.jl
+
