@@ -12,6 +12,12 @@ if ~exist('cm', 'var'); cm = []; end
 % if isempty(cm); cm = [0.36, 0.79, 0.98]; end  % pastel blue
 if isempty(cm); cm = [1, 0.37, 0.54]; end  % pastel red
 
+% Parse error bound input.
+% If not supplied, do not plot.
+if ~exist('Gpo', 'var'); Gpo = []; end
+if isempty(Gpo), Gpo = zeros(length(x)); end
+
+
 % Credible interval limits for plotting.
 x_high2 = x + 2 .* sqrt(diag(Gpo));
 x_low2 = max(x - 2 .* sqrt(diag(Gpo)),0);
