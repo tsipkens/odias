@@ -22,7 +22,7 @@ git clone git://github.com/tsipkens/odias --recurse-submodules
 which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the `cmap/` and `tfer_pma/` folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
 
 ```Matlab
-addpath('tfer_pma', 'cmap');
+addpath 'cmap' 'tfer_pma';
 ```
 
 For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
@@ -31,14 +31,17 @@ For **tfer_pma**, functions in the **kernel** package will add this folder to th
 
 #### Acknowledgements and credit
 
-This code was primarily written by Timothy Sipkens at the University of British Columbia and the National Research Council of Canada. 
+This code was primarily written by Timothy Sipkens at the University of British Columbia and the National Research Council of Canada. Some code is taken from a corresponding two-dimensional size distribution inversion code available [here][mat2d], with the corresponding acknowledgements. 
 
-Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][1]. 
+Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][Huckle2012]. Twomey method follows from [Twomey (1975)][Twomey1975]. Twomey-Markowski follows from the adaptation to the Twomey method by [Markowski (1987)][Markowski1987]. Exponential distance method adapts the method from [Sipkens et al. (2020)][Sipkens2020] to one dimension. 
 
-We also wish to acknowledge a competing code by Petters available [here][2], which contains regularization tools for aerosol particle size distribution inversion in the Julia language. 
+We also wish to acknowledge a competing code by Petters available [here][PettersCode], which contains regularization tools for aerosol size distribution inversion in Julia. 
 
 
 
-[1]: https://onlinelibrary.wiley.com/doi/abs/10.1002/pamm.201210310
-[2]: https://github.com/mdpetters/RegularizationTools.jl
-
+[Huckle2012]: https://onlinelibrary.wiley.com/doi/abs/10.1002/pamm.201210310
+[PettersCode]: https://github.com/mdpetters/RegularizationTools.jl
+[Twomey1975]: https://www.sciencedirect.com/science/article/pii/0021999175900285
+[Markowski1987]: https://www.tandfonline.com/doi/abs/10.1080/02786828708959153
+[Sipkens2020]: https://doi.org/10.1016/j.jaerosci.2020.105565
+[mat2d]: https://github.com/tsipkens/mat-2d-aerosol-inversion
