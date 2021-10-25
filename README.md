@@ -33,7 +33,7 @@ For **tfer_pma**, functions in the **kernel** package will add this folder to th
 
 This code was primarily written by Timothy Sipkens at the University of British Columbia and the National Research Council of Canada. Some code is taken from a corresponding two-dimensional size distribution inversion code available [here][mat2d], with the corresponding acknowledgements. 
 
-Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][Huckle2012]. Twomey method follows from [Twomey (1975)][Twomey1975]. Twomey-Markowski follows from the adaptation to the Twomey method by [Markowski (1987)][Markowski1987]. Exponential distance method adapts the method from [Sipkens et al. (2020)][Sipkens2020] to one dimension. 
+Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][Huckle2012], as recently explored by [Petters (2021)][Petters2021]. The Twomey method follows from [Twomey (1975)][Twomey1975]. The Twomey-Markowski method follows from the adaptation to the Twomey method by [Markowski (1987)][Markowski1987]. Exponential distance method adapts the method presented by [Sipkens et al. (2020)][Sipkens2020] for two dimensions to the one-dimensional case here. 
 
 We also wish to acknowledge a competing code by Petters available [here][PettersCode], which contains regularization tools for aerosol size distribution inversion in Julia. 
 
@@ -44,4 +44,5 @@ We also wish to acknowledge a competing code by Petters available [here][Petters
 [Twomey1975]: https://www.sciencedirect.com/science/article/pii/0021999175900285
 [Markowski1987]: https://www.tandfonline.com/doi/abs/10.1080/02786828708959153
 [Sipkens2020]: https://doi.org/10.1016/j.jaerosci.2020.105565
+[Petters2021]: https://amt.copernicus.org/preprints/amt-2021-51/
 [mat2d]: https://github.com/tsipkens/mat-2d-aerosol-inversion
