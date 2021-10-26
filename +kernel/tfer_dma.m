@@ -27,7 +27,7 @@
 %  ADAPTED FROM: Buckley et al. (2017) and Olfert group
 
 
-function [Omega,Zp_tilde] = tfer_dma(d_star,d,z,prop,opts)
+function [Omega,Zp_tilde] = tfer_dma(d_star, d, z, prop, opts)
 
 
 %-- Parse inputs ---------------------------------------------------------%
