@@ -3,51 +3,30 @@
 % AUTHOR: Timothy Sipkens, 2020-04-11
 %=========================================================================%
 
+clear;
 close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
 d_star = logspace(log10(10), log10(1e3), 80)';  % mobility setpoints
-d_star2 = exp(log(d_star) - (log(d_star(2)) - log(d_star(1))) ./ 2);  % shifted by 1/2 setpoint
 
-prop_dma = kernel.prop_dma;
-
-
-A = kernel.gen_dma(d_star, d, prop_dma);
+prop = kernel.prop_dma;
 
 
+A = kernel.gen_smps(d_star, d, [], prop);
+
+
+mu_d = [200, 200/3];
+s_d = [1.55, 1.55 / 1.15];
+w_d = [1, 0.5];
+
+%{
 mu_d = 200;
-s_d = 1.55;
+s_d = 1.2;
+w_d = 1;
+%}
 
-% Unimodal.
-% x0 = normpdf(log10(d), log10(mu_d), log10(s_d));
-
-% Bimodal.
-x0 = normpdf(log10(d), log10(mu_d), log10(s_d)) + ...
-    0.5 .* normpdf(log10(d), log10(mu_d / 3), log10(s_d / 1.15));
-
-b0 = A * x0;
-
-N = 1e3;
-[b, Lb] = tools.get_noise(b0, N, 1e-6);
-
-
-figure(1);
-plot(d_star, b0, '--', 'Color', 0.6.*[1,1,1]);
-hold on;
-% plot(d_star, b, 'b.', 'MarkerSize', 10);
-stairs(d_star2, b, 'b');  % more representative of TSI display
-
-hold off;
-set(gca, 'XScale', 'log');
-title('Real distribution and data');
-
-limy = ylim();
-hold on;
-eb = errorbar(d_star, b, 2 ./ (diag(Lb)), '.', 'Color', 0.85.*[1,1,1]);
-hold off;
-ylim([0, limy(2)]);
-uistack(eb,'bottom')
+[b, Lb, x0] = tools.gen_data(A, d, mu_d, s_d, w_d, d_star);
 
 
 %%
@@ -111,7 +90,7 @@ disp(' ');
 %-- Exponential distance --%
 disp('Running exponential distance ...');
 lambda_ed = 6e0;
-ld = log10(s_d);
+ld = log10(s_d(1));
 [x_ed, ~, ~, Gpo_inv_ed] = ...
     invert.exp_dist(Lb * A, Lb * b, lambda_ed, ld, d);
 Gpo_ed = inv(Gpo_inv_ed);
