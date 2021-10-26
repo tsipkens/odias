@@ -89,6 +89,22 @@ if or(strcmp(opt,'Gopalakrishnan'),strcmp(opt,'hybrid'))
     end
 end
 
+if strcmp(opt, 'Fuchs')
+    eps = 13.5;  % dielectric constant (from T. Johnson)
+    nit = 1.01e13;  % ion·s/m3
+    
+    % Assume pressure is 1 bar.
+    disp(' Running Fuchs unipolar charging model:');
+    tools.textbar([0,length(d)]);
+    for ii=1:length(d)
+        [~, pz] = kernel.fuchs(d(ii), max(80,round(max(z).*1.2)), T, 1, nit, eps);
+        fn(ii,:) = pz(z);
+        
+        tools.textbar([ii,length(d)]);
+    end
+end
+
+
 fn = fn';
 
 end
