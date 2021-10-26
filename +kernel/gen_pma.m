@@ -23,24 +23,26 @@
 
 function [Lambda, prop] = gen_pma(sp, m, d, z, prop, opt, optz)
 
+addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
+
 
 %-- Parse inputs ---------------------------------------------------------%
-addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
 if ~exist('opt','var'); opt = []; end
 
 % By default, use Taylor series solution baout rc (Case 1C) without diffusion.
 % See Sipkens et al., Aerosol Sci. Technol. (2019) for more information.
 if isempty(opt); opt = '1C'; end
 
-
 % Option for charge state.
 if ~exist('optz','var'); optz = []; end
-
 
 % If not given, import default properties of PMA, 
 % as selected by prop_pma function.
 if ~exist('prop','var'); prop = []; end
-if isempty(prop); prop = prop_pma(); end
+if isempty(prop); prop = kernel.prop_pma; end
+
+if ~exist('z','var'); z = []; end
+if isempty(z); z = (1:4)'; end
 %-------------------------------------------------------------------------%
 
 
@@ -49,12 +51,18 @@ f_z = kernel.tfer_charge(d.*1e-9, z, [], optz); % get fraction charged for d
 
 
 fun = str2func(['tfer_',opt]); % call relevant function from submodule
-Lambda = f_z(1,:) .* ...
-    fun(sp, m.*1e-18, d.*1e-9, z(1), prop)'; % CPMA transfer function
 
-% Add additional charge states.
-for ii=2:length(z)
-    Lambda = Lambda + f_z(ii,:) .* fun(sp, m.*1e-18, d.*1e-9, z(ii), prop)';
+% Loop through setpoints.
+Lambda = zeros(length(sp), length(m));
+for jj=1:length(sp)
+    Lambda(jj,:) = f_z(1,:) .* ...
+        fun(sp(jj), m.*1e-18, d.*1e-9, z(1), prop)'; % CPMA transfer function
+
+    % Add additional charge states.
+    for ii=2:length(z)
+        Lambda(jj,:) = Lambda(jj,:) + f_z(ii,:) .* ...
+            fun(sp(jj), m.*1e-18, d.*1e-9, z(ii), prop)';
+    end
 end
 
 
