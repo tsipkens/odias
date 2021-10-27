@@ -40,7 +40,7 @@ for i=1:1:length(probs)
     end
     zmean = zmean + i*probs(i);
 end
-
+    
 end
 
 
@@ -49,104 +49,112 @@ end
 %   Subfunctions
 %=========================================================================%
 
+%== FUCHS_SUB ============================================================%
+%   Determines the combination coefficient b
+%   
+%   INPUTS:
+%    epsilon = Material dielectric constant
+%    m = max number of charges to consider (takes longer / blows up with too many)
+%    P = pressure (bar)
+%    T is temperature in K
 function [b] = fuchs_sub(nmax, T, dp, P, epsilon)
 
-% Determines the combination coefficient b
-% INPUT PARAMETERS
-% epsilon = Material dielectric constant
-% m = max number of charges to consider (takes longer / blows up with too many)
-% P = pressure (bar)
-% T is temperature in K
-
-%Ion Concentration (ions/m3)
-%t_total = 1.68; % Total Charging Time in seconds
-%P = 1; % Pressure in atm
-
-a = dp / 2; % Converts particle diameter to radius in meters
+a = dp / 2;  % converts particle diameter to radius in meters
 
 %  CONSTANTS
-e = 1.6e-19;        % Electron Charge (C)
-k = 1.38e-23;       % Boltzman's Constant (J/K)
-Na = 6.023e23;     % Avogadro's Number (mol^-1)
-KE = 9e9;           % Prop. Constant 
+e = 1.6e-19;     % electron charge (C)
+k = 1.38e-23;    % Boltzman's constant (J/K)
+Na = 6.023e23;   % Avogadro's number (mol^-1)
+KE = 9e9;        % prop. constant 
 K = (epsilon - 1) / (epsilon + 1);
-%K=0.65;
-%K=1
-%disp(K)
-%disp(log10(d))
 
-% Image Force Parameter
 % ION PROPERTIES
-mi = .109; % Ionic Molecular Weight (kg/mol)
-mg = .029; % Air Molecular Weight (kg/mol)
-Z = .00014; % Electrical Mobility of Ion (m2/Vs)
-Zi = Z / P; % Electrical Mobility at Pressure P
-D = k * T * Zi / e; % Diffusion Coefficient (m2/s)
-ci = sqrt(8 * k * T * Na / pi / mi); % Mean Speed of the Ions (m/s)
-li = 1.329 * Zi / e * sqrt(k * T * mi * mg / (mi + mg) / Na); % Ionic Mean Free Path of gaseous ions
+mi = .109;   % ionic molecular weight (kg/mol)
+mg = .029;   % air molecular weight (kg/mol)
+Z = .00014;  % electrical mobility of ion (m2/Vs)
+Zi = Z / P;  % electrical mobility at pressure P
+D = k * T * Zi / e;  % diffusion coefficient (m2/s)
+ci = sqrt(8 * k * T * Na / pi / mi);  % mean speed of the ions (m/s)
+li = 1.329 * Zi / e * sqrt(k * T * mi * mg / (mi + mg) / Na);  % ionic mean free path of gaseous ions
 
-% LIMITING SPHERE RADIUS (Fuchs1963 Eqn 5)
+
+% LIMITING SPHERE RADIUS (Fuchs, 1963, Eqn 5)
 delta = (a^3) / (li^2) * ((1/5) * ((1 + li/a)^5) - ...
     (1/3) * (1 + (li^2) / (a^2)) * ((1 + li/a)^3) + ...
     (2/15) * ((1 + (li^2) / (a^2)) ^ (5/2)));
 
-% CALCULATION OF PSI and COLISION PROBABILITY (see Fuchs63)
-n = 0:1:nmax; % Initializes charge state array from 0 to maximum considered charge (m)
-r = delta:-a/1000:a; % Initializes spacial array from limiting sphere radius to particle radius
 
-% Initialize arrays for performance improvements
-PSI = zeros(nmax,1);
-bmsqrd = zeros(nmax,1);
-gam_unfiltered = zeros(nmax,1);
-for i = 1:1:nmax % Steps through charge state array
-    n2 = n(i); % Calls out each charge
-    fun = @(x) int_fun(x,n2,a,K,T); % Define integration function
-    PSI(i,1) = integral(@(x)fun(x),0,a/delta); % (Fuchs1963 Eqn 11)
-    pot1 = KE*(e^2)*((n(i) / delta)-K*((a^3) / (2 * (delta^2) * (delta^2-(a^2))))); % Potential energy of the ion at r=limited sphere radius (Fuch1963 Eqn 4)
-    pot2 = KE*(e^2)*((n(i) ./ r)-K*((a^3) ./ (2 * (r.^2) .* (r.^2-(a^2))))); % Potential energy of the ion array calculated across spacial array (Fuch1963 Eqn 4)
-    impfac=(r.^2).*(1+(2/(3*k*T))*(pot1-pot2)); % Impactor factor squared (Fuchs1963 Eqn 7)
-    bmsqrd(i,1) = min(impfac); % Finds minimum of squared impactor factor
-    gam_unfiltered(i,1) = bmsqrd(i,1)/(delta^2); % For b<b_m, alpha=(bm/delta)^2 (Fuchs1963 Pg 188)
-end
+% CALCULATION OF PSI and COLISION PROBABILITY (see Fuchs, 1963)
+n = 0:1:(nmax-1);  % charge state array from 0 to maximum considered charge (m)
+r = delta:-a/1000:a;  % spacial array from limiting sphere radius to particle radius
 
-% Finds elements that are less than equal to one
-gam_filter_1 = gam_unfiltered<=1; 
+% Perform numerical integration.
+fun = @(x) int_fun(x, n', a, K, T);  % integration function
+PSI = integral(@(x) fun(x), 0, a / delta, 'ArrayValued', true);  % (Fuchs, 1963, Eqn 11)
 
-% Finds elements that are greater than equal to zero
-gam_filter_2 = gam_unfiltered>0;
+% Compute potential energies.
+pot1 = KE*(e^2) .* ((n' ./ delta) - ...
+    K .* ((a^3) / (2 * (delta^2) * ...
+    (delta^2 - (a^2)))));  % of the ion at r=limited sphere radius (Fuchs, 1963, Eqn 4)
+pot2 = KE .* (e^2) .* ((n' ./ r) - ...
+    K .* ((a^3) ./ (2 * (r.^2) .* ...
+    (r.^2 - (a^2)))));  % of the ion array calculated across spacial array (Fuchs, 1963, Eqn 4)
 
-%gam = mtlb_i(gam,matrix(find(gam>1),1,-1),1);
-%gam = mtlb_i(gam,matrix(find(gam<0),1,-1),0);
-%disp(gam)
-%disp(size(gam))
+% Calculate impactor factor and gam.
+impfac = (r.^2) .* (1 + (2/(3*k*T)) .* (pot1 - pot2));  % impactor factor squared (Fuchs, 1963, Eqn 7)
+bmsqrd = min(impfac, [], 2);  % finds minimum of squared impactor factor
+gam = bmsqrd ./ (delta^2);  % for b<b_ m, alpha=(bm/delta)^2 (Fuchs, 1963, Pg 188)
 
-% CALCULATION OF THE COMBINATION COEFFICIENT
-pot_d = KE*(e^2)*((n / delta)-K*((a^3) / (2 * (delta^2) * (delta^2-(a^2))))); % Potential energy of the ion at r=limited sphere radius across charge state array (Fuch1963 Eqn 4)
-% Initialize arrays for performance improvements
-b=zeros(nmax,1);
-gam=zeros(nmax,1); 
-for i=1:1:nmax
-    % Only keeps impactor factors that are between 0 and 1 (Physically possible situations)
-    if and(gam_filter_1(i,1)==1,gam_filter_2(i,1)==1)
-        gam(i,1) = gam_unfiltered(i,1);
-    else
-        gam(i,1) = 0;
-    end
-    if gam(i,1) ~= 0 % Combination coefficient (b=I/no) (Fuchs1963 Eqn 10) 
-        b(i) = ((4*pi*a*D) / ((((4*D*a) / (gam(i)*ci*(delta^2)))*(exp(pot_d(i)/k/T)))+PSI(i,1)));
-    end
-end
+
+% Filters for gam.
+% Only keeps impactor factors that are between 
+% 0 and 1 (Physically possible situations). 
+f1 = gam<=1;  % elements that are less than equal to one
+f2 = gam>0;  % elements that are greater than equal to zero
+f3 = and(f1==1, f2==1);  % combine above filters
+
+% Potential energy of the ion at r=limited sphere radius 
+% across charge state array (Fuchs, 1963, Eqn 4). 
+pot_d = KE * (e^2) * ((n(f3)' / delta) - K*((a^3) / ...
+    (2 * (delta^2) * (delta^2 - (a^2)))));
+
+% Calculation of the combination coefficient.
+b = zeros(size(gam));  % zero if f3 is false
+b(f3) = ((4*pi*a*D) ./ ((((4*D*a) ./ ...
+    (gam(f3) .* ci .* (delta^2))) .* ...
+    (exp(pot_d ./ k ./ T))) + PSI(f3)));
+
 
 end
 
 
-% ECD  E
-% Equilibrium charge distribution function.
+%== INT_FUN ==============================================================%
+% This function calculates the function of PSI integral at 
+% the denominator in the limiting sphere model Fuchs (1963).
+function [out] = int_fun(x,n,a,K,T)
+
+k = 1.38e-23; % Boltzman's Constant (J/K)
+e = 1.6e-19;  % Electron Charge (C)
+KE = 9e9;     % Prop. Constant
+
+r = a ./ x;  % normalize distance wrt distance away from particle surface
+pot = KE .* (e.^2) * ((n./r) - K .* ((a.^3) ./ ...
+    (2 .* (r.^2) .* (r.^2 - (a.^2)))));  % potential energy of the ion at normalized radius (Fuch1963 Eqn 4)
+out = exp(pot ./ k ./ T);  % term to be integrated in Fuchs (1963), Eqn 11
+
+% Remove inf values in favour of very large values.
+out(isinf(out)) = realmax();
+
+end
+
+
+%== ECD ==================================================================%
+%   Equilibrium charge distribution function.
 function f = ecd(d, T, nmax)
 
 k = 1.38e-23; % Boltzmann Constant
-e = 1.6e-19; % Electronic charge
-K = 1 / (4 * pi * 8.85e-12); % Coloumb law constant
+e = 1.6e-19;  % electron charge
+K = 1 / (4 * pi * 8.85e-12);  % Coloumb law constant
 partition = sqrt(pi) / sqrt((K * e ^ 2)/(d * k * T));
 
 n = (1:1:nmax);
@@ -155,52 +163,30 @@ f = exp((-K*(e^2) .* (n.^2)) ./ (d*k*T)) ./ partition;
 end
 
 
+%== BIRTH_DEATH ==========================================================%
+function [Z] = birth_death(b, nit_total, dist)
 
-function [Z] = birth_death(b,nit_total,dist)
+% Total charging time (sec).
+nit = 0:1e11:nit_total;  % defines nit vector
+newm = size(b, 1);
 
-% Total Charging Time (sec)
-nit = 0:1e11:nit_total; % Defines nit vector
-[newm, ~] = size(b);
+fun = @(t,y) charge(t, y, b, newm);  % defined dy/dt array for ODE
+[~, Y] = ode45(@(t,y) fun(t,y), nit, dist');
 
-fun = @(t,y)charge(t, y, b, newm);  % Defined dy/dt array for ODE
-[T, Y] = ode45(@(t,y) fun(t,y), nit, transpose(dist)); %#ok<ASGLU> % Solves ODE f=lst,t=nit,yo=dist
-
-% Scilab code Z=[nit',Y']; transpose and joins Y and Z
-Z(:,1)=transpose(nit);
-Z(:,2:(newm+1))=Y;
+Z = [nit', Y];
 
 end
 
 
+%== CHARGE ===============================================================%
+%   This function calculates the fraction of charged particles according 
+%   (Boisdron and Brock, 1970, Eqn 18) birth-and-death model. The model 
+%   can be used with Combination Coefficients (b) determined by any models 
+%   available in the literature (cont., fm, and trans. regime). 
+function [dy] = charge(~, y, b, zmax)
 
-function [out] = int_fun(x,n,a,K,T)
-
-% This function calculates the function of PSI integral at the denominator in the limiting sphere model Fuchs63
-% x is the 
-k = 1.38e-23; % Boltzman's Constant (J/K)
-e = 1.6e-19;  % Electron Charge (C)
-KE = 9e9;     % Prop. Constant
-
-r = a ./ x; % Normalize distance wrt distance away from particle surface
-pot = KE*(e^2)*((n./r)-K*((a^3)./(2.*(r.^2).*(r.^2-(a^2))))); % Potential energy of the ion at normalized radius (Fuch1963 Eqn 4)
-out = exp(pot./k./T); % Term to be integrated in Fuchs1963 Eqn 11
-
-end
-
-
-
-function [dy] = charge(t,y,b,nmax) %#ok<INUSL>
-
-% This function calculates the fraction of charged particles according Boisdron and Brock1970 Eqn 18 
-% birth-and-death model. The model can be used with Combination Coefficients (b) 
-% determined by any models available in the literature (cont., fm, and trans. regime)
-
-dy = zeros(nmax,1);
-
-dy(1) = -b(1)*y(1);
-for i = 2:1:nmax
-  dy(i) = b(i-1)*y(i-1)-b(i)*y(i);
-end
+dy = [-b(1) * y(1); ...
+    b(1:(zmax-1)) .* y(1:(zmax-1)) - b(2:end) .* y(2:end)];
 
 end
 
