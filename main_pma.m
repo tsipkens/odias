@@ -14,8 +14,8 @@ prop = kernel.prop_pma;
 d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % get mobility diameters
 
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', 3);
-% Af = kernel.gen_pma(sp, m, d, 1:100, prop, [], 'Fuchs');
-A = kernel.gen_pma(sp, m, d, 1:100, prop);
+Af = kernel.gen_pma(sp, m, d, 1:100, prop, [], 'Fuchs');
+Ab = kernel.gen_pma(sp, m, d, [], prop);
 
 mu = [1, 0.1];
 s = [2.5, 1.9];
@@ -28,11 +28,19 @@ w = 1;
 %}
 
 
-[b, Lb, x0] = tools.gen_data(A, m, mu, s, w, m_star);
+figure(1);
+clf;
+hold on;
+tools.gen_data(Af, m, mu, s, w, m_star);
+hold off;
 
-% hold on;
-% tools.gen_data(Af, m, mu, s, w, m_star);
-% hold off;
+hold on;
+tools.gen_data(Ab, m, mu, s, w, m_star);
+hold off;
+
+A = Af;
+[b, Lb, x0] = tools.gen_data(A, m, mu, s, w);
+
 
 %%
 

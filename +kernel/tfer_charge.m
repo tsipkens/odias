@@ -4,16 +4,16 @@
 %  laboratory at the University of Alberta.
 % 
 %  INPUTS:
-%   d     Particle diameter [m]
-%   z     Integer particle charge state (optional, default = 0:6)
-%   T     Temperature [K] (optional, default = 298 K)
-%   opt   String that specifies which model to use (optional, default = 'hybrid')
+%   d      Particle diameter [m]
+%   z      Integer particle charge state (optional, default = 0:6)
+%   T      Temperature [K] (optional, default = 298 K)
+%   model  String that specifies which model to use (optional, default = 'hybrid')
 % 
 %  ------------------------------------------------------------------------
 %  
 %  AUTHOR: Timothy Sipkens, 2018-12-27
 
-function [fn] = tfer_charge(d, z, T, opt)
+function [fn] = tfer_charge(d, z, T, model, opt)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('T','var')
@@ -28,8 +28,15 @@ elseif isempty(z)
     z = 0:6;
 end
 
-if ~exist('opt','var'); opt = []; end
-if isempty(opt); opt = 'hybrid'; end
+if ~exist('model','var'); model = []; end
+if strcmpi(model, 'fuchs'); model = 'f'; end
+if isempty(model)
+    model = repmat('w', [1,length(z)]);
+    model(abs(z) < 3) = 'g';
+end
+
+if ~exist('opt', 'var'); opt = []; end
+if isempty(opt); opt = struct(); end
 %-------------------------------------------------------------------------%
 
 
@@ -41,9 +48,11 @@ Z_Z = 0.875; % ion mobility ratio (Wiedensohler, 1988)
 [vec_d,vec_z] = ndgrid(d,z); % used in boolean expressions below
 fn = zeros(size(vec_d));
 
-if or(strcmp(opt,'Wiedensohler'),strcmp(opt,'hybrid'))
-    if and(any(and(z>-3,z<3)),~strcmp(opt,'hybrid')) % if charge state less than 3
-        ind = and(z>-3,z<3);
+% Wiedensohler.
+if any(model == 'w')
+    indw = (model == 'w')';
+    if any(abs(z) < 3)  % if charge state less than 3
+        ind = and(indw, abs(z) < 3);
 
         a = [-26.3328,-2.3197,-0.0003,-2.3484,-44.4756;
             35.9044,0.6175,-0.1014,0.6044,79.3772;
@@ -62,8 +71,8 @@ if or(strcmp(opt,'Wiedensohler'),strcmp(opt,'hybrid'))
         fn(and(vec_d<20e-9, abs(vec_z)==2)) = 0;
     end
 
-    if any(z>=3) % if charge state is 3 or more
-        ind = z>=3;
+    if any(abs(z) >= 3) % if charge state is 3 or more
+        ind = and(indw, abs(z) >= 3);
 
         fn(:,ind) = e./sqrt(4*pi*pi*epi*kB*T.*vec_d(:,ind)).*...
             exp(-(vec_z(:,ind)-2*pi*epi*kB*T*log(Z_Z).*vec_d(:,ind)./e^2).^2./...
@@ -74,34 +83,44 @@ if or(strcmp(opt,'Wiedensohler'),strcmp(opt,'hybrid'))
     end
 end
 
-
-if or(strcmp(opt,'Gopalakrishnan'),strcmp(opt,'hybrid'))
+% Gopalakrishnan.
+if any(model == 'g')
+    indg = (model == 'g')';
     if any(z<3)
-        ind = z<3;
-
-        a = get_a('conducting');
+        ind = and(indg, z < 3);
+        
+        if ~isfield(opt, 'conduction'); cond = 1;
+        else; cond = opt.conduction; end
+        a = get_a(cond);
 
         exponent = zeros(length(d),sum(ind));
         for ii = 1:4
-            exponent = exponent + a(ii,z(ind)+1).*log(d.*1e9).^(ii-1);
+            exponent = exponent + ...
+                a(ii,z(ind)+1) .* log(d.*1e9) .^ (ii-1);
         end
         fn(:,ind) = exp(exponent);
     end
 end
 
-if strcmp(opt, 'Fuchs')
-    eps = 13.5;  % dielectric constant (from T. Johnson)
-    nit = 1.01e13;  % ion·s/m3
+if any(model == 'f')
+    % Dielectric constant (default from T. Johnson).
+    if ~isfield(opt, 'eps'); eps = 13.5;
+    else; eps = opt.eps; end
+    
+    % ion·s/m3
+    if ~isfield(opt, 'nit'); nit = 1.01e13;
+    else; nit = opt.nit; end
     
     % Assume pressure is 1 bar.
-    disp(' Running Fuchs unipolar charging model:');
+    disp(' Running Fuchs charging model:');
     tools.textbar([0,length(d)]);
     for ii=1:length(d)
-        [~, pz] = kernel.fuchs(d(ii), max(80,round(max(z).*1.2)), T, 1, nit, eps);
+        [~, pz] = kernel.fuchs(d(ii), max(80,round(max(z) .* 1.2)), T, 1, nit, eps);
         fn(ii,:) = pz(z);
         
         tools.textbar([ii,length(d)]);
     end
+    disp(' ');
 end
 
 
@@ -110,9 +129,9 @@ fn = fn';
 end
 
 
-function [a] = get_a(opt) % coefficients from Gopalakrishnan et al.
+function [a] = get_a(cond) % coefficients from Gopalakrishnan et al.
 
-if strcmp(opt,'conducting') % conducting values
+if cond == 1 % conducting values
     a = [-0.3880,-8.0157,-40.714;...
         0.4545,3.2536,17.487;...
         -0.1634,-0.5018,-2.6146;...
