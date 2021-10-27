@@ -1,4 +1,5 @@
 
+clear;
 close all;
 addpath cmap;
 
@@ -58,14 +59,7 @@ disp(' ');
 
 
 figure(2);
-semilogx(d, x0, 'k--');
-hold on;
-
-x_tk = x_tk2;
-Gpo_tk = Gpo_tk2;
-semilogx(d, x_tk, 'c');
-semilogx(d, x_tk + 2 .* sqrt(diag(Gpo_tk)),'c--');
-semilogx(d, max(x_tk - 2 .* sqrt(diag(Gpo_tk)),0), 'c--');
-hold off;
+clf;
+tools.plotci(d, x_tk2, Gpo_tk2, x0);
 
 

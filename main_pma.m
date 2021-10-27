@@ -124,22 +124,22 @@ x_tk = x_tk2;
 Gpo_tk = Gpo_tk2;
 
 subplot(2, 2, 1);
-tools.plot_ci(m, x_tk, Gpo_tk, x0);
+tools.plotci(m, x_tk, Gpo_tk, x0);
 title('Tikhonov (2nd)');
 
 subplot(2, 2, 2);
-tools.plot_ci(m, x_ed, Gpo_ed, x0);
+tools.plotci(m, x_ed, Gpo_ed, x0);
 title('Exponential distance');
 
 subplot(2, 2, 3);
-tools.plot_ci(m, x_two, [], x0);
+tools.plotci(m, x_two, [], x0);
 title('Twomey');
 hold on;
 plot(m, xi, 'b--');
 hold off;
 
 subplot(2, 2, 4);
-tools.plot_ci(m, x_twomark, [], x0);
+tools.plotci(m, x_twomark, [], x0);
 title('Twomey-Markowski');
 hold on;
 plot(m, xi, 'b--');

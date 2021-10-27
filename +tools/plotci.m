@@ -1,16 +1,16 @@
 
-% PLOT_CI  Plot MAP estimate along with credible intervals.
+% PLOTCI  Plot MAP estimate along with credible intervals.
 %  
 %  AUTHOR: Timothy Sipkens, 2021-04-09
 
-function h = plot_ci(d, x, Gpo, x0, cm)
+function h = plotci(d, x, Gpo, x0, cspec)
 
 if ~exist('x0', 'var'); x0 = []; end
 
 % Plot color.
-if ~exist('cm', 'var'); cm = []; end
-% if isempty(cm); cm = [0.36, 0.79, 0.98]; end  % pastel blue
-if isempty(cm); cm = [1, 0.37, 0.54]; end  % pastel red
+if ~exist('cspec', 'var'); cspec = []; end
+% if isempty(cspec); cspec = [0.36, 0.79, 0.98]; end  % pastel blue
+if isempty(cspec); cspec = [1, 0.37, 0.54]; end  % pastel red
 
 % Parse error bound input.
 % If not supplied, do not plot.
@@ -26,19 +26,19 @@ x_low1 = max(x - sqrt(diag(Gpo)),0);
 
 % Plot shaded region.
 reg = [x_low2; flipud(x_high2)];
-fill([d; flipud(d)], reg, cm, ...
+fill([d; flipud(d)], reg, cspec, ...
     'EdgeColor', 'none', 'FaceAlpha', 0.15);
 
 set(gca, 'XScale', 'log');
 hold on;
 
 reg = [x_low1; flipud(x_high1)];
-fill([d; flipud(d)], reg, cm, ...
+fill([d; flipud(d)], reg, cspec, ...
     'EdgeColor', 'none', 'FaceAlpha', 0.22);
 
 
 % Plot estimate.
-h = plot(d, x, 'Color', cm, 'LineWidth', 1.5);
+h = plot(d, x, 'Color', cspec, 'LineWidth', 1.5);
 
 
 % Plot credible intervals.
