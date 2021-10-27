@@ -33,7 +33,7 @@ For **tfer_pma**, functions in the **kernel** package will add this folder to th
 
 This code was primarily written by Timothy Sipkens at the University of British Columbia and the National Research Council of Canada. Some code is taken from a corresponding two-dimensional size distribution inversion code available [here][mat2d], with the corresponding acknowledgements. 
 
-Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][Huckle2012], as recently explored by [Petters (2021)][Petters2021]. The Twomey method follows from [Twomey (1975)][Twomey1975]. The Twomey-Markowski method follows from the adaptation to the Twomey method by [Markowski (1987)][Markowski1987]. Exponential distance method adapts the method presented by [Sipkens et al. (2020)][Sipkens2020] for two dimensions to the one-dimensional case here. 
+Two-step Tikhonov inversion follows from the work of [Huckle and Sedlacek (2012)][Huckle2012], as recently explored by [Petters (2021)][Petters2021]. The Twomey method follows from [Twomey (1975)][Twomey1975]. The Twomey-Markowski method follows from the adaptation to the Twomey method by [Markowski (1987)][Markowski1987]. Exponential distance method adapts the method presented by [Sipkens et al. (2020)][Sipkens2020] for two dimensions to the one-dimensional case here. Function evaluating the Fuchs unipolar charging model was originally written by Tyler Johnson, with performance improvements during inclusion in this codebase. 
 
 We also wish to acknowledge a competing code by Petters available [here][PettersCode], which contains regularization tools for aerosol size distribution inversion in Julia. 
 
