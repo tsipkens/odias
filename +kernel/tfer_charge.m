@@ -13,7 +13,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2018-12-27
 
-function [fn] = tfer_charge(d, z, T, model, opt)
+function [fn, qbar] = tfer_charge(d, z, T, model, opt)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('T','var')
@@ -47,6 +47,7 @@ Z_Z = 0.875; % ion mobility ratio (Wiedensohler, 1988)
 
 [vec_d,vec_z] = ndgrid(d,z); % used in boolean expressions below
 fn = zeros(size(vec_d));
+
 
 % Wiedensohler.
 if any(model == 'w')
@@ -83,6 +84,7 @@ if any(model == 'w')
     end
 end
 
+
 % Gopalakrishnan.
 if any(model == 'g')
     indg = (model == 'g')';
@@ -101,6 +103,8 @@ if any(model == 'g')
         fn(:,ind) = exp(exponent);
     end
 end
+qbar = [];  % irrelevant for above models
+
 
 if any(model == 'f')
     % Dielectric constant (default from T. Johnson).
@@ -111,16 +115,21 @@ if any(model == 'f')
     if ~isfield(opt, 'nit'); nit = 1.01e13;
     else; nit = opt.nit; end
     
-    % Assume pressure is 1 bar.
-    disp(' Running Fuchs charging model:');
-    tools.textbar([0,length(d)]);
+    % If many diameters, create textbar.
+    if length(d)>5
+        disp(' Running Fuchs charging model:');
+        tools.textbar([0,length(d)]);
+    end
+    
+    % Main loop over diameters.
+    qbar = zeros(length(d), 1);  % initialize
     for ii=1:length(d)
-        [~, pz] = kernel.fuchs(d(ii), max(80,round(max(z) .* 1.2)), T, 1, nit, eps);
+        [~, pz, qbar(ii)] = kernel.fuchs(d(ii), max(80,round(max(z) .* 1.2)), T, 1, nit, eps);
         fn(ii,:) = pz(z);
         
-        tools.textbar([ii,length(d)]);
+        if length(d)>5; tools.textbar([ii,length(d)]); end
     end
-    disp(' ');
+    if length(d)>5; disp(' '); end
 end
 
 
