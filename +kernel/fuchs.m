@@ -18,9 +18,9 @@
 %  ORIGINAL AUTHOR: Tyler Johnson
 %  MODIFIED: Timothy Sipkens, 2021-10-25
 
-function [zeroprob, probs, zmean] = fuchs(d, zmax, T, P, nit, epsilon)
+function [zeroprob, probs, zmean] = fuchs(d, zmax, T, P, nit, eps)
 
-b = fuchs_sub(zmax, T, d, P, epsilon);
+b = fuchs_sub(zmax, T, d, P, eps);
 
 init_dist = ecd(d, T, zmax); % Equilibrium charge dist (this function is below if you want it – doesn’t make much difference IIRC)
 
