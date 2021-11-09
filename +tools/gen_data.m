@@ -1,5 +1,5 @@
 
-function [b, Lb, x0] = gen_data(A, d, mu, s, w, d_star)
+function [b, Lb, x0] = gen_data(A, d, mu, s, w, d_star, N)
 
 % Weighting for multuple modes. 
 if ~exist('w', 'var'); w = []; end
@@ -8,6 +8,9 @@ if isempty(w); w = ones(size(mu)); end
 if ~exist('d_star', 'var'); d_star = []; end
 if isempty(d_star); f_plot = 0;
 else; f_plot = 1; end
+
+if ~exist('N', 'var'); N = []; end
+if isempty(N); N = 1e3; end
 
 
 % Unimodal.
@@ -25,7 +28,6 @@ end
 
 b0 = A * x0;
 
-N = 1e3;
 [b, Lb] = tools.get_noise(b0, N, 1e-6);
 
 
