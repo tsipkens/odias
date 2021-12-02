@@ -124,8 +124,13 @@ if any(model == 'f')
     % Main loop over diameters.
     qbar = zeros(length(d), 1);  % initialize
     for ii=1:length(d)
-        [~, pz, qbar(ii)] = kernel.fuchs(d(ii), max(80,round(max(z) .* 1.2)), T, 1, nit, eps);
-        fn(ii,:) = pz(z);
+        [p0, pz, qbar(ii)] = kernel.fuchs(d(ii), max(80,round(max(z) .* 1.2)), T, 1, nit, eps);
+        if z(1)~=0  % account for if z = 0 is present
+            fn(ii,:) = pz(z);
+        else
+            fn(ii,2:end) = pz(z(2:end));
+            fn(ii,1) = p0;
+        end
         
         if length(d)>5; tools.textbar([ii,length(d)]); end
     end
