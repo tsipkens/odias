@@ -187,7 +187,7 @@ disp(' ')
 %%
 %{
 % Full charging model. VERY SLOW!
-[qbar1, fz1] = working.fac(m_star, prop, [], [], opt);
+[m_star_fac, qbar1, fz1] = working.fac(m_star, prop, [], [], opt);
 %}
 
 
