@@ -26,7 +26,7 @@ opt.eps = eps0;
 
 % Set transfer function evaluation grid.
 nx = 900;  nb = 450;
-m = logspace(-4.5, 1.5, nx)';  % reconstruction points
+m = logspace(-4.5, 3, nx)';  % reconstruction points
 m_star = logspace(-4, 1, nb)';  % mass-to-charge setpoints
 
 
@@ -183,7 +183,7 @@ imagesc(log10(m_star), log10(m), (x_bar .* A_bar{end})');
 set(gca, 'YDir', 'normal');
 colormap(flipud(ocean));
 xlim([-4, log10(m_star(end-15))]);
-ylim([-4, inf]);
+ylim([-4, log10(m(end))]);
 
 hold on;
 plot(log10(m_star), log10(m_star_iac'), 'r-');
