@@ -50,6 +50,8 @@ m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
 
 %%
 
+% cfg = tools.load_config('+iac/config/v1.default.json');
+
 % cfg = tools.load_config('+iac/config/v1.sig.json');
 % cfg = tools.load_config('+iac/config/v1.Rm.json');
 % cfg = tools.load_config('+iac/config/v1.mm.rho.json');
@@ -121,26 +123,30 @@ if ~strcmp(cfg.perturb, 'distr')
         % A_bar{kk} = kernel.gen_pma(sp, m, d_bar, 0', prop, type, [], opt);
     end
 else
+    for kk=1:length(scan_vec)
+        m_star_iac(kk,:) = m_star_iac0;
+    end
+    
     d_bar = (m .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % get mobility diameters
     sp = get_setpoint(prop0, 'm_star', m_star .* 1e-18, 'Rm', Rm);
     A_bar{1} = kernel.gen_pma(sp, m, d_bar, (1:300)', prop0, type, 'Fuchs', opt0);
 end
 
-%
-x_bar = ones(size(m))';
-% scan_vec = [1/4, 1/2, 1, 2, 4, 8, 16];  % for mod. to GMD
-% scan_vec = [1.2, 1.5, 2, 4, 8, 30, inf];  % for GSD
-
 
 
 m_bar_ftf = [];
+m_bar_jtf = [];
 for kk=1:length(scan_vec)
     
     if ~strcmp(cfg.perturb, 'distr')
-        m_bar_ftf(kk,:) = exp(sum(x_bar .* A_bar{kk} .* log(m)' ./ ...
-            sum(x_bar .* A_bar{kk},2), 2));
+        m_bar_jtf(kk,:) = exp(sum(A_bar{kk} .* log(m)' ./ ...
+            sum(A_bar{kk},2), 2));
+        m_bar_ftf(kk,:) = m_bar_jtf(kk,:);
     
     else
+        m_bar_jtf(kk,:) = exp(sum(A_bar{1} .* log(m)' ./ ...
+            sum(A_bar{1},2), 2));
+        
         muk = 0.1;
         sigk = 1.5;
 
@@ -157,8 +163,8 @@ for kk=1:length(scan_vec)
 
         m_bar_ftf(kk,:) = exp(sum(x_bar .* A_bar{1} .* log(m)' ./ ...
             sum(x_bar .* A_bar{1},2), 2));
-        m_bar_ftf(kk,:) = sum(x_bar .* A_bar{1} .* m' ./ ...
-            sum(x_bar .* A_bar{1},2), 2);
+        % m_bar_ftf(kk,:) = sum(x_bar .* A_bar{1} .* m' ./ ...
+        %     sum(x_bar .* A_bar{1},2), 2);  % arithmatic mean
         % m_bar_ftf(kk,log(m_star) > log(muk) + log(6 .* sigk)) = NaN;
         % m_bar_ftf(kk,log(m_star) < log(muk) - log(6 .* sigk)) = NaN;
         
@@ -180,12 +186,26 @@ for kk=1:length(scan_vec)
 end
 
 
+% Fit to IAC. 
+p = [];
+m_bar_co1 = [];
+for kk=1:length(scan_vec)
+    xflag3 = m_star > 0.3;
+    xflag3(end-20:end) = 0;
+    
+    p(kk,:) = polyfit(log(m_star(xflag3)), log(m_star_iac(kk,xflag3)), 1);
+    m_bar_co1(kk, :) = exp(polyval(p(kk,:), log(m_star)));
+    
+    m_bar_co2(kk, :) = m_star;
+end
+
 
 figure(80);
 loglog(m_star, m_bar_ftf);
 hold on;
 loglog(m_star, m_star_iac, 'k', 'LineWidth', 1);
-loglog(m_star(sel), m_star_fac, 'ko', 'MarkerSize', 5);
+% loglog(m_star(sel), m_star_fac, 'ko', 'MarkerSize', 5);
+loglog(m_star, m_bar_co1, 'r:');
 hold off;
 
 
@@ -212,10 +232,27 @@ xline(m_star(m16), 'r');
 yline(0, 'k');
 hold off;
 
+%{
 hold on;
 semilogx(m_star(sel), (m_star_fac' ./ m_bar_ftf(end, sel)) - 1, 'ko', 'MarkerSize', 5);
 semilogx(m_star(sel), (m_star_fac' ./ m_bar_ftf(1, sel)) - 1, 'ko', 'MarkerSize', 5);
 hold off;
+%}
+
+%-{
+hold on;
+semilogx(m_star, (m_bar_co1(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
+semilogx(m_star, (m_bar_co2(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
+hold off;
+%}
+
+%{
+if strcmp(cfg.perturb, 'distr')
+    hold on;
+    semilogx(m_star(:), (m_bar_jtf(end, :) ./ m_bar_ftf(end, :)) - 1, 'r-');
+    hold off;
+end
+%}
 
 ylim([-0.3, 0.3]);
 if or(strcmp(cfg.perturb, 'distr'), strcmp(cfg.perturb, 'mm.Dm'))
@@ -234,6 +271,7 @@ ylim([-4, log10(m(end))]);
 hold on;
 plot(log10(m_star), log10(m_star_iac'), 'r-');
 plot(log10(m_star(sel)), log10(m_star_fac'), 'ro', 'MarkerSize', 5);
+plot(log10(m_star), log10(m_bar_co1'), 'r-');
 hold off;
 
 
