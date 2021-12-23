@@ -1,0 +1,6 @@
+{
+    "perturb": "eps0",
+    "both": 1, 
+    "scan": [3,5,13.5,50], 
+    "tfer_type": "1C_diff"  // transfer function type
+}
