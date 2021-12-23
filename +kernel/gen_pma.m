@@ -15,13 +15,14 @@
 %  OUTPUTS:
 %   Lambda      Transfer function
 %   prop        CPMA device settings
+%   f_z         Charge fractions
 % 
 %  ------------------------------------------------------------------------
 % 
 %  AUTHOR: Timothy Sipkens, 2021-10-06
 
 
-function [Lambda, prop] = gen_pma(sp, m, d, z, prop, opt, varargin)
+function [Lambda, prop, f_z] = gen_pma(sp, m, d, z, prop, opt, varargin)
 
 addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
 
