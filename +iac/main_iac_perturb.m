@@ -28,8 +28,8 @@ opt0.eps = eps0;
 
 % Set transfer function evaluation grid.
 nx = 900;  nb = 400;
-m = logspace(-5, 3, nx)';  % reconstruction points
-m_star = logspace(-4, 1, nb)';  % mass-to-charge setpoints
+m = logspace(-5, 4, nx)';  % reconstruction points
+m_star = logspace(-4, 2, nb)';  % mass-to-charge setpoints
 
 
 % Get properties and then update.
@@ -54,10 +54,11 @@ m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
 
 %%
 
-cfg = tools.load_config('+iac/config/v1.default.json');
+% cfg = tools.load_config('+iac/config/v1.default.json');
 
 % cfg = tools.load_config('+iac/config/v1.sig1.json');
 % cfg = tools.load_config('+iac/config/v1.sig2.json');
+cfg = tools.load_config('+iac/config/v1.sig3.json');
 % cfg = tools.load_config('+iac/config/v1.Rm.json');
 % cfg = tools.load_config('+iac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+iac/config/v1.mm.Dm.json');
@@ -249,6 +250,8 @@ c0 = exp(p(:,2)) .^ ((prop.Dm - p1) ./ prop.Dm) .* ...
 [p1, c0, nu, c, n0']
 
 
+
+%== START figures ========================================================%
 figure(80);
 loglog(m_star, m_bar_ftf);
 hold on;
@@ -263,10 +266,11 @@ hold off;
 
 
 figure(81);
+m_plot = m_star_iac(2,:);
 cm = ocean;  cm = cm(1:(end-40), :);
 cmap_sweep(size(m_bar_ftf,1), cm);
-semilogx(m_star, (m_star_iac ./ m_bar_ftf) - 1);
-hold on; semilogx(m_star, (m_star_iac(1,:) ./ m_bar_ftf(1,:)) - 1, 'r--'); hold off;
+semilogx(m_plot, (m_star_iac ./ m_bar_ftf) - 1);
+hold on; semilogx(m_plot, (m_star_iac(1,:) ./ m_bar_ftf(1,:)) - 1, 'r--'); hold off;
 
 mr = m_star_iac(1,:)' ./ m_star;
 m1 = find(mr > 1.000001, 1) - 1;
@@ -287,23 +291,23 @@ hold off;
 
 %{
 hold on;
-semilogx(m_star(sel), (m_star_fac' ./ m_bar_ftf(end, sel)) - 1, 'ko', 'MarkerSize', 5);
-semilogx(m_star(sel), (m_star_fac' ./ m_bar_ftf(1, sel)) - 1, 'ko', 'MarkerSize', 5);
+semilogx(m_plot(sel), (m_star_fac' ./ m_bar_ftf(end, sel)) - 1, 'ko', 'MarkerSize', 5);
+semilogx(m_plot(sel), (m_star_fac' ./ m_bar_ftf(1, sel)) - 1, 'ko', 'MarkerSize', 5);
 hold off;
 %}
 
 %-{
 hold on;
-semilogx(m_star, (m_bar_co1(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
-semilogx(m_star, (m_bar_co2(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
-semilogx(m_star, (m_bar_co3(end,:) ./ m_bar_ftf(end,:)) - 1, 'c', 'MarkerSize', 5);
+semilogx(m_plot, (m_bar_co1(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
+semilogx(m_plot, (m_bar_co2(end,:) ./ m_bar_ftf(end,:)) - 1, 'r', 'MarkerSize', 5);
+semilogx(m_plot, (m_bar_co3(end,:) ./ m_bar_ftf(end,:)) - 1, 'c', 'MarkerSize', 5);
 hold off;
 %}
 
 %{
 if strcmp(cfg.perturb, 'distr')
     hold on;
-    semilogx(m_star(:), (m_bar_jtf(end, :) ./ m_bar_ftf(end, :)) - 1, 'r-');
+    semilogx(m_plot(:), (m_bar_jtf(end, :) ./ m_bar_ftf(end, :)) - 1, 'r-');
     hold off;
 end
 %}
@@ -340,6 +344,13 @@ plot(log10(m), A_bar{1}(320, :));
 hold on;
 plot(log10(m), A_bar{1}(161, :));
 hold off;
+
+
+
+figure(32);
+plot(m_star, q_bar);
+set(gca, 'XScale', 'log', 'YScale', 'log');
+
 
 
 figure(81);  % show Fig. 81 first
