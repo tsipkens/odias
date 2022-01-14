@@ -1,6 +1,6 @@
 {
     "perturb": "distr",
-    "scan": "[1.2, 1.5, 2, 4, 8, 30, inf]", 
+    "scan": "[1.2, 1.5, 1.8, 2.5, 4, 8, 30, inf]", 
     "mu": 0.03,
     "tfer_type": "1C_diff"  // transfer function type
 }

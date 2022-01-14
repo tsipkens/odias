@@ -58,7 +58,8 @@ m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
 
 % cfg = tools.load_config('+iac/config/v1.sig1.json');
 % cfg = tools.load_config('+iac/config/v1.sig2.json');
-cfg = tools.load_config('+iac/config/v1.sig3.json');
+% cfg = tools.load_config('+iac/config/v1.sig3.json');
+cfg = tools.load_config('+iac/config/v1.mu.json');
 % cfg = tools.load_config('+iac/config/v1.Rm.json');
 % cfg = tools.load_config('+iac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+iac/config/v1.mm.Dm.json');
@@ -166,15 +167,17 @@ for kk=1:sz
         m_bar_jtf(kk,:) = exp(sum(A_bar{1} .* log(m)' ./ ...
             sum(A_bar{1},2), 2));
         
+        
+        sigk = scan_vec(kk);
+        
         if isfield(cfg, 'mu')
             muk = cfg.mu;
-        else
-            muk = 0.1;
+        else  % toggle to mean instead
+            sigk = cfg.sig;
+            muk = scan_vec(kk);
         end
-        sigk = 1.5;
-
-        % muk = scan_vec(kk) .* 0.1;
-        sigk = scan_vec(kk);
+        
+        
         if isinf(sigk)
             x_bar = ones(size(m))';
             t1 = x_bar;
@@ -345,11 +348,6 @@ hold on;
 plot(log10(m), A_bar{1}(161, :));
 hold off;
 
-
-
-figure(32);
-plot(m_star, q_bar);
-set(gca, 'XScale', 'log', 'YScale', 'log');
 
 
 
