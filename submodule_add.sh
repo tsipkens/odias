@@ -5,5 +5,5 @@
 # Author:  Timothy Sipkens, 2020-09-17
 #===========================================================#
 
-git submodule add -b master https://github.com/tsipkens/autils autils
+git submodule add -b main https://github.com/tsipkens/autils autils
 git submodule init
