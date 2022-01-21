@@ -87,7 +87,7 @@ sz = max(size(scan_vec));
 
 % span_vec = [0.5, 0.75, 1, 1.25, 1.5] .* rho100_0;
 
-m_star_iac = [];
+m_bar_iac = [];
 A_bar = {};
 if ~strcmp(cfg.perturb, 'distr')
     for kk=1:sz
@@ -128,9 +128,9 @@ if ~strcmp(cfg.perturb, 'distr')
         % If changing both the IAC and full transfer 
         % function outputs. 
         if cfg.both == 0
-            m_star_iac(kk,:) = m_bar_iac0;
+            m_bar_iac(kk,:) = m_bar_iac0;
         else
-            m_star_iac(kk,:) = working.iac(m_star, prop, [], charge_type, opt);
+            m_bar_iac(kk,:) = working.iac(m_star, prop, [], charge_type, opt);
         end
         
         
@@ -143,7 +143,7 @@ if ~strcmp(cfg.perturb, 'distr')
 else
     Rm = Rm0;
     for kk=1:sz
-        m_star_iac(kk,:) = m_bar_iac0;
+        m_bar_iac(kk,:) = m_bar_iac0;
     end
     
     d_bar = (m .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % get mobility diameters
@@ -226,7 +226,7 @@ for kk=1:sz
     xflag3 = m_star > 0.3;
     xflag3(end-20:end) = 0;
     
-    p(kk,:) = polyfit(log(m_star(xflag3)), log(m_star_iac(kk,xflag3)), 1);
+    p(kk,:) = polyfit(log(m_star(xflag3)), log(m_bar_iac(kk,xflag3)), 1);
     m_bar_co1(kk, :) = exp(polyval(p(kk,:), log(m_star)));
     
     %{
@@ -240,7 +240,7 @@ for kk=1:sz
     n0(kk) = fminsearch(@(n) ...
         norm(log((m_bar_co1(kk,:) .^ n + ...
         m_bar_co2(kk,:) .^ n) .^ (1/n)) - ...
-        log(m_star_iac(kk,:))), 2.5);
+        log(m_bar_iac(kk,:))), 2.5);
     m_bar_co3(kk, :) = (m_bar_co1(kk,:) .^ n0(kk) + ...
         m_bar_co2(kk,:) .^ n0(kk)) .^ (1/n0(kk));
 end
@@ -258,7 +258,7 @@ c0 = exp(p(:,2)) .^ ((prop.Dm - p1) ./ prop.Dm) .* ...
 figure(80);
 loglog(m_star, m_bar_ftf);
 hold on;
-loglog(m_star, m_star_iac, 'k', 'LineWidth', 1);
+loglog(m_star, m_bar_iac, 'k', 'LineWidth', 1);
 % loglog(m_star(sel), m_star_fac, 'ko', 'MarkerSize', 5);
 loglog(m_star, m_bar_co1, 'r:');
 loglog(m_star, m_bar_co3, 'c-');
@@ -269,13 +269,13 @@ hold off;
 
 
 figure(81);
-m_plot = m_star_iac(2,:);
+m_plot = m_bar_iac(2,:);
 cm = ocean;  cm = cm(1:(end-40), :);
 cmap_sweep(size(m_bar_ftf,1), cm);
-semilogx(m_plot, (m_star_iac ./ m_bar_ftf) - 1);
-hold on; semilogx(m_plot, (m_star_iac(1,:) ./ m_bar_ftf(1,:)) - 1, 'r--'); hold off;
+semilogx(m_plot, (m_bar_iac ./ m_bar_ftf) - 1);
+hold on; semilogx(m_plot, (m_bar_iac(1,:) ./ m_bar_ftf(1,:)) - 1, 'r--'); hold off;
 
-mr = m_star_iac(1,:)' ./ m_star;
+mr = m_bar_iac(1,:)' ./ m_star;
 m1 = find(mr > 1.000001, 1) - 1;
 m2 = find(mr > 2, 1);
 m3 = find(mr > 3, 1);
@@ -334,7 +334,7 @@ xlim([-4, log10(m_star(end-15))]);
 ylim([-4, log10(m(end))]);
 
 hold on;
-plot(log10(m_star), log10(m_star_iac'), 'r-');
+plot(log10(m_star), log10(m_bar_iac'), 'r-');
 plot(log10(m_star(sel)), log10(m_star_fac'), 'ro', 'MarkerSize', 5);
 plot(log10(m_star), log10(m_bar_co1'), 'r-');
 plot(log10(m_star), log10(m_bar_co3'), 'c-');
