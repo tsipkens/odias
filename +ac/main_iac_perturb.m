@@ -43,7 +43,7 @@ d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility r
 
 % Run the IAC algorithm. 
 [m_bar_iac0, q_bar0, d_iac0] = ...
-    working.iac(m_star, prop0, [], charge_type, opt0);
+    ac.iac(m_star, prop0, [], charge_type, opt0);
 
 %-{
 % Full charging model. VERY SLOW for all of the points!
@@ -130,7 +130,7 @@ if ~strcmp(cfg.perturb, 'distr')
         if cfg.both == 0
             m_bar_iac(kk,:) = m_bar_iac0;
         else
-            m_bar_iac(kk,:) = working.iac(m_star, prop, [], charge_type, opt);
+            m_bar_iac(kk,:) = ac.iac(m_star, prop, [], charge_type, opt);
         end
         
         

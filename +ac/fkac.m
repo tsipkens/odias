@@ -17,4 +17,3 @@ xbar = qbar' .* x_star;
 tools.textheader();  % mark as complete
 
 end
-
