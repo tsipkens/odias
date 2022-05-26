@@ -3,13 +3,13 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2021-10-06
 
-function [mi, qbar0, di0] = iac(m_star, prop, f_deq, model, opt)
+function [mi, qbar0, di0] = iac(m_star, prop, f_deq, cmodel, opt)
 
 if ~exist('f_deq', 'var'); f_deq = []; end
 if isempty(f_deq); f_deq = 0; end
 
-if ~exist('model', 'var'); model = []; end
-if isempty(model); model = 'Fuchs'; end  % assume unipolar Fuch's model
+if ~exist('cmodel', 'var'); cmodel = []; end
+if isempty(cmodel); cmodel = 'Fuchs'; end  % assume unipolar Fuch's model
 
 zmax = 100;
 zvec = 1:zmax;
@@ -50,7 +50,7 @@ for ii=1:n
         di = working.dm2deq(di);
     end
     
-    [~, qbar] = kernel.tfer_charge(di * 1e-9, zvec, 298, model, opt);
+    [~, qbar] = kernel.tfer_charge(di * 1e-9, zvec, 298, cmodel, opt);
     %=====================================================================%
     
     

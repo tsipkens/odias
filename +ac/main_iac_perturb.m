@@ -45,7 +45,7 @@ d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility r
 [m_bar_iac0, q_bar0, d_iac0] = ...
     ac.iac(m_star, prop0, [], charge_type, opt0);
 
-%-{
+%{
 % Full charging model. VERY SLOW for all of the points!
 sel = 1:25:length(m_star);
 m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
@@ -54,20 +54,20 @@ m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
 
 %%
 
-% cfg = tools.load_config('+iac/config/v1.default.json');
+cfg = tools.load_config('+ac/config/v1.default.json');
 
-% cfg = tools.load_config('+iac/config/v1.sig1.json');
-% cfg = tools.load_config('+iac/config/v1.sig2.json');
-% cfg = tools.load_config('+iac/config/v1.sig3.json');
-cfg = tools.load_config('+iac/config/v1.mu.json');
-% cfg = tools.load_config('+iac/config/v1.Rm.json');
-% cfg = tools.load_config('+iac/config/v1.mm.rho.json');
-% cfg = tools.load_config('+iac/config/v1.mm.Dm.json');
-% cfg = tools.load_config('+iac/config/v1.nit.json');
-% cfg = tools.load_config('+iac/config/v1.nit.b.json');
-% cfg = tools.load_config('+iac/config/v1.eps.b.json');
-% cfg = tools.load_config('+iac/config/v1.eps2.b.json');
-% cfg = tools.load_config('+iac/config/v1.mm.b.json');
+% cfg = tools.load_config('+ac/config/v1.sig1.json');
+% cfg = tools.load_config('+ac/config/v1.sig2.json');
+% cfg = tools.load_config('+ac/config/v1.sig3.json');
+% cfg = tools.load_config('+ac/config/v1.mu.json');
+% cfg = tools.load_config('+ac/config/v1.Rm.json');
+% cfg = tools.load_config('+ac/config/v1.mm.rho.json');
+% cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
+% cfg = tools.load_config('+ac/config/v1.nit.json');
+% cfg = tools.load_config('+ac/config/v1.nit.b.json');
+% cfg = tools.load_config('+ac/config/v1.eps.b.json');
+% cfg = tools.load_config('+ac/config/v1.eps2.b.json');
+% cfg = tools.load_config('+ac/config/v1.mm.b.json');
 
 % If not a field, indicate the the full transfer function
 % and IAC methods are not being perturbed (only the full

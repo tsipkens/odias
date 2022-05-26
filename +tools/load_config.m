@@ -37,7 +37,6 @@ for ii=1:length(fnames)
     
     prop0 = read_json(fnames{ii});  % read new settings
     
-    
     f = fieldnames(prop0);
     
     % Copy (or overwrite) existing settings.
@@ -76,7 +75,6 @@ end
 end
 
 
-
 %== READ_JSON ==========================================%
 %   Read JSON structured configuration files. 
 %   Allows for C++ or Javscript style commenting.
@@ -98,6 +96,4 @@ str = erase(erase(eraseBetween( ...
 results = jsondecode(str);
 
 end
-
-
 

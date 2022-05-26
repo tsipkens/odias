@@ -25,14 +25,65 @@ opt0.eps = eps0;
 nx = 150;
 d = logspace(0, 3, nx)';  % mobility diameters (as surrogate for deq)
 
-
+% Get charge distribution.
 zmax = 100;
-zvec = 1:zmax;
-[fq, qbar] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt0);
+zvec = 0:zmax;
+[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt0);
 
-% [~, qbar] = kernel.tfer_charge(di * 1e-9, zvec, 298, model, opt);
+% Get power law fit.
+fl = qbar0 > 4;  % flag higher charge states
+A = [log(d(fl)), ones(size(d(fl)))];
+b = log(qbar0(fl));
+p = (A' * A) \ (A' * b);
+c0 = p(1)
+eta = p(2)
+qbarh = exp(polyval(p, log(d)));
 
+qbarl = ones(size(d));
+
+n = 3;
+qbart = (qbarh .^ n + 1) .^ (1/n);
+
+
+
+
+% Plot charge information.
+figure(1);
+plot(d, qbarh, 'b');
+hold on;
+plot(d, qbart, 'b');
+plot(d, qbar0, 'k');
+hold off;
+set(gca, 'XScale', 'log', 'YScale', 'log');
+ylim([0.5, inf]);
+
+
+%{
+% Plot distribution of charges.
+figure(3);
+h = pcolor(d, zvec, fq);
+set(gca, 'XScale', 'log', 'YScale', 'log');
+set(h, 'EdgeColor', 'none');
+colormap(flipud(ocean));
+
+hold on;  % add qbar0 computed above
+plot(d, qbar0, 'k');
+hold off;
+%}
+
+
+%%
+%== Basic average charge ==============================%
+%   i.e., perfect classification using charge-equivalent diameter.
+
+[~, q_fk] = ac.fkac(d, fq');
+[~, q_iac] = ac.iac(d, );
 
 figure(1);
-plot(d, qbar);
-set(gca, 'XScale', 'log', 'YScale', 'log')
+hold on;
+plot(d, q_fk);
+hold off;
+
+
+
+
