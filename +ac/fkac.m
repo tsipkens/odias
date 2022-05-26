@@ -3,16 +3,16 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-02-25
 
-function [xbar, zbar] = fkac(x_star, kernel)
+function [xbar, qbar] = fkac(x_star, kernel)
 
 tools.textheader('Running FKAC');  % add header to console
 
 z = 0:size(kernel, 2);
 
-zbar = exp(sum(kernel .* z' ./ ...
+qbar = exp(sum(kernel .* z' ./ ...
     sum(kernel, 2), 2));
 
-xbar = zbar' .* x_star;
+xbar = qbar' .* x_star;
 
 tools.textheader();  % mark as complete
 

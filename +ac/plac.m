@@ -1,22 +1,25 @@
 
 % PLAC  Charge correction using the power law-average charge method.
 %  
-%  QBAR = plac(X_STAR, NU, Q0) computed the average transmitted particle
-%  charge at the setpoint, X_STAR, for a power law having an exponent NU
+%  XBAR = ac.plac(X_STAR, NU, Q0) computed the average transmitted particle
+%  size at the setpoint, X_STAR, for a power law having an exponent NU
 %  and pre-factor Q0. Assumes classification against a particle size
 %  equiavlent to charge-equivalent diameter. 
 %  
-%  QBAR = plac(X_STAR, NU, Q0, PROP) adds an input for a mass-mobility
+%  XBAR = ac.plac(X_STAR, NU, Q0, PROP) adds an input for a mass-mobility
 %  struct, PROP. Computes the average transmitted particle mass. Assumes 
 %  the mobility and charge-equivalent diameters are the same. 
 %  
-%  QBAR = plac(X_STAR, NU, Q0, ETA, C0) allows for explicitly specifying
+%  XBAR = ac.plac(X_STAR, NU, Q0, ETA, C0) allows for explicitly specifying
 %  the power law exponent ETA and pre-factor C0 in relating the desired
 %  particle size to the charge-equivalent diameter. 
 %  
+%  [XBAR, QBAR] = ac.plac(...) adds an output for the average transmitted
+%  particle charge. 
+%  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
-function [qbar, xbar] = plac(x_star, nu, q0, eta, c0)
+function [xbar, qbar] = plac(x_star, nu, q0, eta, c0)
 
 %-- Parse inputs ----------------------%
 if ~exist('eta', 'var'); eta = []; end
