@@ -35,7 +35,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2019-12-08
 
-function [b,Lb] = get_noise(b0,n_tot,gam0,f_apx)
+function [b, Lb] = get_noise(b0, n_tot, gam0, f_apx)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('n_tot','var'); n_tot = []; end

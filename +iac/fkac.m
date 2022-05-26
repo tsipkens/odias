@@ -5,7 +5,6 @@
 
 function [xbar, zbar] = fkac(x_star, kernel)
 
-
 tools.textheader('Running FKAC');  % add header to console
 
 z = 0:size(kernel, 2);
