@@ -29,8 +29,8 @@ opt.eps = eps;
 
 % Set transfer function evaluation grid.
 nx = 700;
-m = logspace(-4, 4, nx)';  % reconstruction points
-m_star = [5e-4, 0.00965967, 0.0443217, 0.101746, 1, 3]';  % mass-to-charge setpoints
+m = logspace(-3, 4, nx)';  % reconstruction points
+m_star = [5e-3, 0.00965967, 0.0443217, 0.101746, 1, 3]';  % mass-to-charge setpoints
 nb = length(m_star);
 
 z = 1:300;
@@ -75,7 +75,7 @@ qbart = (qbarh .^ n + 1) .^ (1/n);
 
 % Run IAC algorithm. 
 [m_iac, q_iac] = ...
-    ac.iac_m2(m_star, prop, [], charge_type, opt);
+    ac.iac_m(m_star, prop, [], charge_type, opt);
 table(m_star, m_iac, q_iac)
 
 % Run FKAC algorithm.

@@ -5,30 +5,19 @@ close all;
 addpath cmap;
 
 
-% Defaults.
-Rm0 = 3;
-nit = 4e13;
-eps0 = 13.5;
-
-Dm0 = 2.48;
-rho100_0 = 510;
-Q = 0.9183;
-
-
-
 % Set charging model parameters. 
-opt0.nit = nit;
-opt0.eps = eps0;
+opt.nit = 4e13;
+opt.eps = 13.5;
 
 
 % Set transfer function evaluation grid.
 nx = 150;
-d = logspace(0, 3, nx)';  % mobility diameters (as surrogate for deq)
+d = logspace(0.5, 2.25, nx)';  % mobility diameters (as surrogate for deq)
 
 % Get charge distribution.
 zmax = 100;
 zvec = 0:zmax;
-[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt0);
+[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt);
 
 % Get power law fit.
 fl = qbar0 > 4;  % flag higher charge states
@@ -76,21 +65,25 @@ hold off;
 
 %%
 %== Basic average charge ==============================%
-%   i.e., perfect classification using charge-equivalent diameter.
-qmodel = @(d, zvec) out2(@kernel.tfer_charge, d .* 1e-9, zvec, 298, 'Fuchs', opt0);
+c0 = 1;
+eta = 1/3;  % power for deq (e.g., ~1/3 for spheres and x = mass)
+x = d .^ (1/eta);
 
-[~, q_fkac] = ac.fkac(d, fq');
-[~, q_iac] = ac.iac(d, qmodel);
-[~, q_plac] = ac.plac(d, nu, q0);
+% Assume delta transfer function equally efficient at all sizes.
+qmodel = @(x, zvec) out2(@kernel.tfer_charge, x .^ eta .* 1e-9, zvec, 298, 'Fuchs', opt);
 
-figure(1);
+[~, q_iac] = ac.iac(x, qmodel);
+[~, q_plac] = ac.plac(x, nu, q0, eta, c0);
+
+figure(2);
+plot(d, qbar0, 'k');  % direct, charge at size x
 hold on;
-plot(d, q_fkac, 'r--');
-plot(d, q_iac, 'g:');
-plot(d, q_plac, 'c');
+plot(d, qbarh, 'k--');
+plot(d, q_iac, 'Color', [0.9, 0.4, 0.4]);  % red, ave. charge for setpoint x*
+plot(d, q_plac, 'Color', [0.2, 0.2, 0.8]);  % blue, ave. charge for setpoint x*
 hold off;
-
-
+set(gca, 'XScale', 'log', 'YScale', 'log');
+ylim([0.5, inf]);
 
 function o = out2(fun, varargin)
     [~, o] = fun(varargin{:});

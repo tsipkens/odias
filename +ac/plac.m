@@ -47,9 +47,10 @@ if p > 0.8
     xbar = NaN(size(xbar));
 end
 
-if any(qbar < 1.5)
-    warning('Average charges below 1.5 truncated.');
-    qbar(qbar < 1.5) = NaN;
+qlim = 1.2;
+if any(qbar < qlim)
+    warning(['Average charges below ', num2str(qlim), ' truncated.']);
+    qbar(qbar < qlim) = NaN;
 end
 
 % Additional output: a function handle for qbar.
