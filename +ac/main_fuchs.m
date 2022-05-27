@@ -2,7 +2,7 @@
 
 clear;
 close all;
-addpath cmap tfer_pma;
+addpath cmap;
 
 
 % Defaults.
@@ -35,9 +35,11 @@ fl = qbar0 > 4;  % flag higher charge states
 A = [log(d(fl)), ones(size(d(fl)))];
 b = log(qbar0(fl));
 p = (A' * A) \ (A' * b);
-c0 = p(1)
-eta = p(2)
-qbarh = exp(polyval(p, log(d)));
+nu = p(1)
+q0 = exp(p(2))
+% qbarh = exp(polyval(p, log(d)));
+% qbarh = exp(nu .* log(d) + log(q0));
+qbarh = q0 .* d .^ nu;
 
 qbarl = ones(size(d));
 
@@ -75,15 +77,23 @@ hold off;
 %%
 %== Basic average charge ==============================%
 %   i.e., perfect classification using charge-equivalent diameter.
+qmodel = @(d, zvec) out2(@kernel.tfer_charge, d .* 1e-9, zvec, 298, 'Fuchs', opt0);
 
-[~, q_fk] = ac.fkac(d, fq');
-[~, q_iac] = ac.iac(d, );
+[~, q_fkac] = ac.fkac(d, fq');
+[~, q_iac] = ac.iac(d, qmodel);
+[~, q_plac] = ac.plac(d, nu, q0);
 
 figure(1);
 hold on;
-plot(d, q_fk);
+plot(d, q_fkac, 'r--');
+plot(d, q_iac, 'g:');
+plot(d, q_plac, 'c');
 hold off;
 
 
+
+function o = out2(fun, varargin)
+    [~, o] = fun(varargin{:});
+end
 
 

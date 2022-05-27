@@ -19,25 +19,41 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
-function [xbar, qbar] = plac(x_star, nu, q0, eta, c0)
+function [xbar, qbar, qfun] = plac(x_star, nu, q0, eta, c0)
 
 %-- Parse inputs ----------------------%
 if ~exist('eta', 'var'); eta = []; end
 if isempty(eta); eta = 1; end
 
 if isstruct(eta)  % if mass-mobility property struct
-    c0 = eta.m0;
-    eta = eta.zet;
+    prop = eta;
+    c0 = (1 / (prop.k * 1e18)) ^ (1 / prop.zet);
+    eta = 1 / prop.zet;
 end
 
 if ~exist('c0', 'var'); c0 = []; end
 if isempty(c0); c0 = 1; end
 %-------------------------------------%
 
-p = eta .* nu;
-qbar = (c0 .^ nu .* q0 .* x_star .^ p) ...
-    .^ (1 ./ (1 - p));  % average charge
+p = eta .* nu;  % combined power
 
-xbar = x_star .* qbar;  % average transmitted particle size
+xbar = (c0 .^ nu .* q0 .* x_star) ...
+    .^ (1 ./ (1 - p));  % average charge
+qbar = xbar ./ x_star;  % average transmitted particle size
+
+if p > 0.8
+    warning('Power law average charge will be inaccurate. Returning NaN.');
+    qbar = NaN(size(qbar));
+    xbar = NaN(size(xbar));
+end
+
+if any(qbar < 1.5)
+    warning('Average charges below 1.5 truncated.');
+    qbar(qbar < 1.5) = NaN;
+end
+
+% Additional output: a function handle for qbar.
+qfun = @(x_star) (c0 .^ nu .* q0 .* x_star) ...
+    .^ (1 ./ (1 - p)) ./ x_star;
 
 end
