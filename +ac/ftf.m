@@ -2,6 +2,8 @@
 % FTF  Full transfer function approach, including size distribution. 
 %  Not an average charge method, rather acting as a baseline.
 %  
+%  UNDER CONSTRUCTION.
+%  
 %  AUTHOR: Timothy Sipkens, 2022-05-27
 
 function o = ftf(m_star, kernel, p)
