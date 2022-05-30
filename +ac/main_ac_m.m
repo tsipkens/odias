@@ -29,7 +29,7 @@ opt.eps = eps;
 
 % Set transfer function evaluation grid.
 nx = 700;
-m = logspace(-3, 4, nx)';  % reconstruction points
+m = logspace(-3.5, 3.5, nx)';  % reconstruction points
 m_star = [5e-3, 0.00965967, 0.0443217, 0.101746, 1, 3]';  % mass-to-charge setpoints
 nb = length(m_star);
 
@@ -70,6 +70,26 @@ n = 3;
 qbart = (qbarh .^ n + 1) .^ (1/n);
 
 
+
+%%
+figure(3);
+zmid = exp((log(z(2:end)) + log(z(1:(end-1)))) / 2);
+zmid = [0.7071, zmid];
+h = pcolor(d, zmid, fq);
+hold on;
+plot(d, qbar0, 'k');
+plot(d, qbarh);
+plot(d, qbarl);
+plot(d, qbart);
+hold off;
+set(gca, 'XScale', 'log', 'YScale', 'log');
+set(h, 'EdgeColor', 'none');
+cm = ocean;
+colormap(flipud(cm(50:end-2,:)));
+colorbar;
+
+
+
 %%
 %== AC ALGORITHMS ========================================================%
 
@@ -97,7 +117,5 @@ plot(m, qbar0);  % map mass to charge directly (as opposed to transmitted)
 hold off;
 
 set(gca, 'XScale', 'log', 'YScale', 'log');
-
-
 
 

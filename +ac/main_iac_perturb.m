@@ -41,8 +41,8 @@ prop0 = working.prop_update_massmob(prop0, ...
 d = (m .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility relation
 d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility relation
 
-% Run the IAC algorithm. 
-[m_bar_iac0, q_bar0, d_iac0] = ...
+% Run the IAC algorithm with default settings. 
+[m_bar_iac0, q_bar0] = ...
     ac.iac_m(m_star, prop0, [], charge_type, opt0);
 
 %{
@@ -54,9 +54,9 @@ m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
 
 %%
 
-cfg = tools.load_config('+ac/config/v1.default.json');
+% cfg = tools.load_config('+ac/config/v1.default.json');
 
-% cfg = tools.load_config('+ac/config/v1.sig1.json');
+cfg = tools.load_config('+ac/config/v1.sig1.json');
 % cfg = tools.load_config('+ac/config/v1.sig2.json');
 % cfg = tools.load_config('+ac/config/v1.sig3.json');
 % cfg = tools.load_config('+ac/config/v1.mu.json');
