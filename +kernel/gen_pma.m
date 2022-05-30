@@ -17,13 +17,14 @@
 %   prop        CPMA device settings
 %   f_z         Charge fractions
 %   Lambda_z    Transfer function with individual charge contributions
+%   qbar        Average charge on particles (not on transmitted particles)
 % 
 %  ------------------------------------------------------------------------
 % 
 %  AUTHOR: Timothy Sipkens, 2021-10-06
 
 
-function [Lambda, prop, f_z, Lambda_z] = gen_pma(sp, m, d, z, prop, opt, varargin)
+function [Lambda, prop, f_z, Lambda_z, qbar] = gen_pma(sp, m, d, z, prop, opt, varargin)
 
 addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
 
@@ -46,7 +47,7 @@ if isempty(z); z = (1:4)'; end
 
 
 % Compute charge state.
-f_z = kernel.tfer_charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
+[f_z, qbar] = kernel.tfer_charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
 
 % Assign tfer_pma function to use.
 fun = str2func(['tfer_',opt]); % call relevant function from submodule

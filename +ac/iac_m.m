@@ -13,8 +13,8 @@ if isempty(f_deq); f_deq = 0; end
 if ~exist('cmodel', 'var'); cmodel = []; end
 if isempty(cmodel); cmodel = 'Fuchs'; end  % assume unipolar Fuch's model
 
-%   The physical model to predict the average charge.
-qmodel = @(mi, zvec) physfun(mi, prop, f_deq, zvec, cmodel, opt);
+% The physical model to predict the average charge.
+qmodel = @(mi, qvec) physfun(mi, prop, f_deq, qvec, cmodel, opt);
 
 % Call parent IAC function.
 [mbar, qbar] = ac.iac(m_star, qmodel);
@@ -24,7 +24,7 @@ end
 
 %== PHYSFUN ==============================================================%
 %   The physical model to convert mass to average charge. 
-function [qbar, di] = physfun(mi, prop, f_deq, zvec, cmodel, opt)
+function [qbar, di] = physfun(mi, prop, f_deq, qvec, cmodel, opt)
 
 mi = max(mi, 0.00001);
 
@@ -35,7 +35,7 @@ if f_deq
     di = working.dm2deq(di);
 end
 
-[~, qbar] = kernel.tfer_charge(di * 1e-9, zvec, 298, cmodel, opt);
+[~, qbar] = kernel.tfer_charge(di * 1e-9, qvec, 298, cmodel, opt);
 
 end
 

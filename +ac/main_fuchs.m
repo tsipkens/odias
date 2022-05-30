@@ -19,13 +19,10 @@ zmax = 100;
 zvec = 0:zmax;
 [fq, qbar0] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt);
 
+
 % Get power law fit.
-fl = qbar0 > 4;  % flag higher charge states
-A = [log(d(fl)), ones(size(d(fl)))];
-b = log(qbar0(fl));
-p = (A' * A) \ (A' * b);
-nu = p(1)
-q0 = exp(p(2))
+[nu, q0, p] = ac.get_power_law(qbar0, d);
+
 % qbarh = exp(polyval(p, log(d)));
 % qbarh = exp(nu .* log(d) + log(q0));
 qbarh = q0 .* d .^ nu;
@@ -74,6 +71,7 @@ qmodel = @(x, zvec) out2(@kernel.tfer_charge, x .^ eta .* 1e-9, zvec, 298, 'Fuch
 
 [~, q_iac] = ac.iac(x, qmodel);
 [~, q_plac] = ac.plac(x, nu, q0, eta, c0);
+[~, q_pliac] = ac.pliac(x, nu, q0, eta, c0);
 
 figure(2);
 plot(d, qbar0, 'k');  % direct, charge at size x
@@ -81,6 +79,7 @@ hold on;
 plot(d, qbarh, 'k--');
 plot(d, q_iac, 'Color', [0.9, 0.4, 0.4]);  % red, ave. charge for setpoint x*
 plot(d, q_plac, 'Color', [0.2, 0.2, 0.8]);  % blue, ave. charge for setpoint x*
+plot(d, q_plac, '--', 'Color', [0.1, 0.7, 0.1]);  % green, ave. charge for setpoint x*
 hold off;
 set(gca, 'XScale', 'log', 'YScale', 'log');
 ylim([0.5, inf]);

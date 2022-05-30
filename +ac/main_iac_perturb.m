@@ -24,6 +24,7 @@ charge_type = 'Fuchs';
 % Set charging model parameters. 
 opt0.nit = nit;
 opt0.eps = eps0;
+opt0.geo = 1;  % compute geometric mean in IAC
 
 
 % Set transfer function evaluation grid.
@@ -31,30 +32,72 @@ nx = 900;  nb = 400;
 m = logspace(-5, 3, nx)';  % reconstruction points
 m_star = logspace(-4, 0, nb)';  % mass-to-charge setpoints
 
+zvec = (1:300)';
 
 % Get properties and then update.
 prop0 = kernel.prop_pma;
 prop0 = prop_update_flow(prop0, Q .* 1.66667e-5);
-prop0 = working.prop_update_massmob(prop0, ...
+prop0 = massmob.add(prop0, ...
 	'Dm', Dm0, 'rho100', rho100_0);  % universal relation
 
 d = (m .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility relation
 d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility relation
 
-% Run the IAC algorithm with default settings. 
-[m_bar_iac0, q_bar0] = ...
-    ac.iac_m(m_star, prop0, [], charge_type, opt0);
+% Get Fuchs power law.
+disp('Getting power law for default...');
+sp = get_setpoint(prop0, 'm_star', m_star .* 1e-18, 'Rm', Rm0);
+[K, ~, fq, Kq, qbar0] = kernel.gen_pma(sp, m, d, zvec, prop0, [], 'Fuchs', opt0);  % get kernel
+[nu0, qp0] = ac.get_power_law(qbar0, d);
 
-%{
-% Full charging model. VERY SLOW for all of the points!
-sel = 1:25:length(m_star);
-m_star_fac = working.fac(m_star(sel), prop0, [], [], opt0);
-%}
 
 
 %%
+% "True" average transmitted particle size.
+m_bar_t0 = ac.true([], K, m);
+m_bar_g0 = exp(ac.true([], K, log(m)));
 
-% cfg = tools.load_config('+ac/config/v1.default.json');
+% Run the IAC algorithm with default settings. 
+[m_bar_iac0, q_bar_iac0] = ...
+    ac.iac_m(m_star, prop0, [], charge_type, opt0);
+
+% Run the FTFAC algorithm with default settings. 
+[m_bar_ftfac0, q_bar_ftfac0] = ...
+    ac.ftfac(m_star, Kq, zvec');
+
+% Run the PLAC algorithm with default settings. 
+[m_bar_plac0, q_bar_plac0] = ...
+    ac.plac(m_star, nu0, qp0, prop0);
+[m_bar_pliac0, q_bar_pliac0] = ...
+    ac.pliac(m_star, nu0, qp0, prop0);  % instead solved with IAC
+
+
+% Plot errors at default.
+figure(1);
+
+subplot(5, 1, 1:3);
+plot(m_star, m_bar_iac0);
+hold on;
+plot(m_star, m_bar_ftfac0);
+plot(m_star, m_bar_pliac0);
+plot(m_star, m_bar_plac0);
+plot(m_star, m_bar_t0, 'k');
+plot(m_star, m_star, 'k--');
+hold off;
+set(gca, 'XScale', 'log', 'YScale', 'log');
+ylim([1e-4, 1e2]);
+
+subplot(5, 1, 4:5);
+plot(m_star, (m_bar_iac0 - m_bar_t0) ./ m_bar_t0);
+hold on;
+plot(m_star, (m_bar_ftfac0 - m_bar_t0) ./ m_bar_t0);
+plot(m_star, (m_bar_pliac0 - m_bar_t0) ./ m_bar_t0);
+plot(m_star, (m_bar_plac0 - m_bar_t0) ./ m_bar_t0);
+plot(m_star, (m_bar_g0 - m_bar_t0) ./ m_bar_t0, 'k');
+plot(m_star, (m_star - m_bar_t0) ./ m_bar_t0, 'k');
+yline(0, 'k--');
+hold off;
+ylim([-0.2, 0.1]);  % reset y-axis
+set(gca, 'XScale', 'log');
 
 cfg = tools.load_config('+ac/config/v1.sig1.json');
 % cfg = tools.load_config('+ac/config/v1.sig2.json');

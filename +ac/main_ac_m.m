@@ -48,11 +48,7 @@ d_star = (m_star .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % use mass-mobility rel
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', Rm);
 
 tools.textheader('Computing kernel')
-[~, ~, ~, Aq] = kernel.gen_pma(sp, m, d, z, prop, [], 'Fuchs', opt);  % get kernel
-tools.textheader();
-
-tools.textheader('Computing charge fractions')
-[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, z, 298, 'Fuchs', opt);
+[~, ~, fq, Aq, qbar0] = kernel.gen_pma(sp, m, d, z, prop, [], 'Fuchs', opt);  % get kernel
 tools.textheader();
 
 % Get power law fit.
@@ -98,9 +94,9 @@ colorbar;
     ac.iac_m(m_star, prop, [], charge_type, opt);
 table(m_star, m_iac, q_iac)
 
-% Run FKAC algorithm.
-[m_fkac, q_fkac] = ac.fkac(m_star, Aq, z);
-table(m_star, m_fkac, q_fkac)
+% Run FTFAC algorithm.
+[m_ftfac, q_ftfac] = ac.ftfac(m_star, Aq, z);
+table(m_star, m_ftfac, q_ftfac)
 
 % Run PLAC algorithm.
 [m_plac, q_plac, qfun_plac] = ac.plac(m_star, nu, q0, prop);
@@ -110,7 +106,7 @@ table(m_star, m_plac, q_plac)
 figure(2);
 plot(m_star, q_iac, 'or');
 hold on;
-plot(m_star, q_fkac, 'o');
+plot(m_star, q_ftfac, 'o');
 plot(m_star, q_plac, 'ok');
 plot(m, qfun_plac(m), 'k--');
 plot(m, qbar0);  % map mass to charge directly (as opposed to transmitted)
