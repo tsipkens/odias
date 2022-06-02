@@ -10,7 +10,7 @@ if ~exist('q', 'var'); q = []; end
 if isempty(q); q = 0:(size(Kq, 2) - 1); end
 
 
-disp('Running FKAC...');  % add header to console
+disp('Running FTFAC...');  % add header to console
 
 qbar = sum(sum(Kq, 3) .* q ./ ...
     sum(sum(Kq, 3), 2), 2);

@@ -1,6 +1,6 @@
 {
     "perturb": "mm",
     "both": 1, 
-    "scan": "[2.48, 2.97, 3; 510, 785.4, 2160]", 
+    "scan": "[2.48, 3, 2.97; 510, 1000, 2160]", 
     "tfer_type": "1C_diff"  // transfer function type
 }

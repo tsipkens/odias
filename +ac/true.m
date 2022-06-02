@@ -9,15 +9,19 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-30
 
-function mbar = true(~, K, x, p)
+function [mbar, mbar_geo] = true(~, K, x, p)
 
 x = x';
 
 % If distribution is ommitted, assume ones.
 if ~exist('p', 'var'); p = []; end
-if isempty(p); p = ones(size(x)); end
+if isempty(p); p = ones(size(x));
+else; p = p'; end
 
 mbar = sum(p .* K .* x, 2) ./ ...
     sum(p .* K, 2);
+
+mbar_geo = exp(sum(p .* K .* log(x), 2) ./ ...
+    sum(p .* K, 2));
 
 end

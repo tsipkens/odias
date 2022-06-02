@@ -48,7 +48,7 @@ d_star = (m_star .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % use mass-mobility rel
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', Rm);
 
 tools.textheader('Computing kernel')
-[~, ~, fq, Aq, qbar0] = kernel.gen_pma(sp, m, d, z, prop, [], 'Fuchs', opt);  % get kernel
+[K, ~, fq, Kq, qbar0] = kernel.gen_pma(sp, m, d, z, prop, [], 'Fuchs', opt);  % get kernel
 tools.textheader();
 
 % Get power law fit.
@@ -88,6 +88,13 @@ colorbar;
 
 %%
 %== AC ALGORITHMS ========================================================%
+% Compute "true" average.
+pr = ones(size(m));
+gsmd = 1.8;  % GSD for mobility
+gsm = exp(prop.zet * log(gsmd));  % GSD with respect to mass
+pr = normpdf(log(m), log(0.3801), log(gsm));  % alternate size distribution
+[m_t, m_t_geo] = ac.true(m_star, K, m, pr);
+table(m_star, m_t, m_t_geo)
 
 % Run IAC algorithm. 
 [m_iac, q_iac] = ...
@@ -95,7 +102,7 @@ colorbar;
 table(m_star, m_iac, q_iac)
 
 % Run FTFAC algorithm.
-[m_ftfac, q_ftfac] = ac.ftfac(m_star, Aq, z);
+[m_ftfac, q_ftfac] = ac.ftfac(m_star, Kq, z);
 table(m_star, m_ftfac, q_ftfac)
 
 % Run PLAC algorithm.
