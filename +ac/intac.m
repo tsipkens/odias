@@ -25,26 +25,28 @@ if isempty(n); n = 3.5; end  % controls interpolation function
 
 pow = eta .* nu;  % combined power
 
-%-{
+%{
 % Use IAC method.
 qmodel = @(x, qvec) (1 + (c0 ^ nu * q0 .* x .^ pow) .^ n) .^ (1/n);  % average charge
 [xbar, qbar] = ac.iac(x_star, qmodel);
 %}
 
-%{
+%-{
 % Use specifically-derived Newton's method.
-a = c0 ^ nu * q0 .* x_star .^ pow;
-qmodel = @(qbar) qbar - (1 + (a .* qbar .^ pow) .^ n) .^ (1/n);
-dqmodel = @(qbar) abs(1 - pow .* a .^ n .* qbar .^ (n*pow - 1) .* ...
-    (1 + (a .* qbar .^ pow) .^ n) .^ (1/n - 1));
-qbar1 = ones(size(x_star));
-qbar0 = zeros(size(x_star));
-while any((qbar1 - qbar0) > 0.01)
-    qbar0 = qbar1;
-    qbar1 = qbar0 - qmodel(qbar0) ./ abs(dqmodel(qbar0));
+a = (c0 ^ nu * q0 .* x_star .^ pow) .^ n;
+qmodel = @(x) -x + (a .* x .^ (pow*n) + 1) .^ (1/n);
+dqmodel = @(x) -1 + (1/n) .* (a .* x .^ (pow*n) + 1) .^ (1/n - 1) .* ...
+    (a .* (pow*n) .* x .^ (pow*n - 1));
+updater = @(x) x - qmodel(x) ./ dqmodel(x);
+y1 = c0 ^ nu * q0 .* x_star .^ (pow);
+fl = ones(size(y1));
+while any(fl)
+    y0 = y1;
+    y1 = updater(y0);
+    
+    fl = abs(y0 - y1) > 0.001;
 end
-
-qbar = qbar1;
+qbar = y1;
 xbar = qbar .* x_star;
 %}
 
