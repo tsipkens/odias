@@ -24,7 +24,7 @@ git clone git://github.com/tsipkens/odias --recurse-submodules
 which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the `cmap/` and `tfer_pma/` folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
 
 ```Matlab
-addpath 'cmap' 'tfer_pma' 'autils';
+addpath('cmap', 'tfer_pma', 'autils');
 ```
 
 For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
