@@ -29,6 +29,18 @@ addpath('cmap', 'tfer_pma', 'autils');
 
 For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
 
+## Packages
+
+Packages refer to folders prefaced with a **+** symbol and are used to group similar functions. Packages include: 
+
+1. The **+kernel** package, which contains function to evaluate transfer functions and charging fractions that are used to describe classifiers (i.e., build kernels). 
+
+2. The **+invert** package contains methods that can be used to invert data to find size distributions, often by adding prior information to stabalize the inversion (e.g., Twomey-Markowski and Tikhonov regularization). 
+
+3. The **+ac** package contains method for computing the average charge and particle size transmitted by classifiers at a given setpoint. This is particularily useful when the full size distribution is not of interest and when using unipolar chargers with a classifier. 
+
+Use of functions in these packages requires one to use the package name in the function call. For example, when calling the `tikhonov(...)` function in the **+invert** package, one must use `invert.tikhonov(...)`. 
+
 ----
 
 #### Acknowledgements and credit
