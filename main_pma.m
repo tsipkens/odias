@@ -14,8 +14,8 @@ prop = kernel.prop_pma;
 d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % get mobility diameters
 
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', 3);
-Af = kernel.gen_pma(sp, m, d, 1:100, prop, [], 'Fuchs');
-Ab = kernel.gen_pma(sp, m, d, [], prop);
+Af = kernel.gen_pma(sp, m, d, 0:100, prop, [], 'Fuchs');
+Ab = kernel.gen_pma(sp, m, d, (0:3)', prop);
 
 mu = [1, 0.1];
 s = [2.5, 1.9];
@@ -38,7 +38,7 @@ hold on;
 tools.gen_data(Ab, m, mu, s, w, m_star);
 hold off;
 
-A = Af;
+A = Ab;  % use bipolar data
 [b, Lb, x0] = tools.gen_data(A, m, mu, s, w);
 
 
@@ -70,8 +70,9 @@ disp(' ');
 %-- 1st order Tikhonov ----%
 disp('Running Tikhonov (1st) ...');
 lambda_tk1 = 3.8e1;
+Lpr_tk1 = invert.tikhonov_lpr(1, length(x0), 0);  % apply 0 BC, rather than default
 [x_tk1, ~, ~, Gpo_inv_tk1] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, 1);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, Lpr_tk1);
 Gpo_tk1 = inv(Gpo_inv_tk1);
 e.tk1 = (x_tk1 - x0)' * Gpo_inv_tk1 * (x_tk1 - x0);
 tools.textdone();
@@ -81,8 +82,9 @@ disp(' ');
 %-- 2nd order Tikhonov ----%
 disp('Running Tikhonov (2nd) ...');
 lambda_tk2 = 1e3;
+Lpr_tk2 = invert.tikhonov_lpr(2, length(x0), 0);  % apply 0 BC
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, Lpr_tk2);
 Gpo_tk2 = inv(Gpo_inv_tk2);
 e.tk2 = (x_tk2 - x0)' * Gpo_inv_tk2 * (x_tk2 - x0);
 tools.textdone();
@@ -102,10 +104,12 @@ disp(' ');
 
 %-- Exponential distance --%
 disp('Running exponential distance ...');
-lambda_ed = 0.9e1;
+lambda_ed = 2e1;
 ld = log10(s(1));
+Lpr_ed = invert.exp_dist_lpr(ld, m, 0);  % generate prior covariance
+Lpr_ed = Lpr_ed;
 [x_ed, ~, ~, Gpo_inv_ed] = ...
-    invert.exp_dist(Lb * A, Lb * b, lambda_ed, ld, m);
+    invert.exp_dist(Lb * A, Lb * b, lambda_ed, Lpr_ed);
 Gpo_ed = inv(Gpo_inv_ed);
 e.ed = (x_ed - x0)' * Gpo_inv_ed * (x_ed - x0);
 tools.textdone();
