@@ -1,5 +1,10 @@
 
 % FTFAC  Full transfer function-average charge algorithm.
+%  Not a true average charge function as this method only ignores the
+%  particle size distribution. 
+%  
+%  NOTE: If input Kq has been multiplied by the size distribution, the true
+%  result is output.
 %  
 %  AUTHOR: Timothy Sipkens, 2022-02-25
 

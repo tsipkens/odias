@@ -9,7 +9,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-30
 
-function [mbar, mbar_geo] = true(~, K, x, p)
+function [x_bar, x_bar_geo] = true(~, K, x, p)
 
 x = x';
 
@@ -18,10 +18,10 @@ if ~exist('p', 'var'); p = []; end
 if isempty(p); p = ones(size(x));
 else; p = p'; end
 
-mbar = sum(p .* K .* x, 2) ./ ...
+x_bar = sum(p .* K .* x, 2) ./ ...
     sum(p .* K, 2);
 
-mbar_geo = exp(sum(p .* K .* log(x), 2) ./ ...
+x_bar_geo = exp(sum(p .* K .* log(x), 2) ./ ...
     sum(p .* K, 2));
 
 end

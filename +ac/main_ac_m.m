@@ -105,6 +105,10 @@ table(m_star, m_iac, q_iac)
 [m_ftfac, q_ftfac] = ac.ftfac(m_star, Kq, z);
 table(m_star, m_ftfac, q_ftfac)
 
+% Run FCFAC algorithm.
+[m_fcfac, q_fcfac] = ac.fcfac(m_star, fq, m, z);
+table(m_star, m_fcfac, q_fcfac)
+
 % Run PLAC algorithm.
 [m_plac, q_plac, qfun_plac] = ac.plac(m_star, nu, q0, prop);
 table(m_star, m_plac, q_plac)
@@ -114,6 +118,7 @@ figure(2);
 plot(m_star, q_iac, 'or');
 hold on;
 plot(m_star, q_ftfac, 'o');
+plot(m_star, q_fcfac, '^');
 plot(m_star, q_plac, 'ok');
 plot(m, qfun_plac(m), 'k--');
 plot(m, qbar0);  % map mass to charge directly (as opposed to transmitted)

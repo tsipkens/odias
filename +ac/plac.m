@@ -35,6 +35,8 @@ if ~exist('c0', 'var'); c0 = []; end
 if isempty(c0); c0 = 1; end
 %-------------------------------------%
 
+disp('Running PLAC...');  % add header to console
+
 p = eta .* nu;  % combined power
 
 qbar = (c0 .^ nu .* q0) .^ (1 ./ (1 - p)) .* ...
@@ -56,5 +58,8 @@ end
 % Additional output: a function handle for qbar.
 qfun = @(x_star) (c0 .^ nu .* q0 .* x_star) ...
     .^ (1 ./ (1 - p)) ./ x_star;
+
+tools.textdone();  % mark as complete
+disp(' ');
 
 end
