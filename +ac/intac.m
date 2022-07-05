@@ -20,8 +20,10 @@ if ~exist('c0', 'var'); c0 = []; end
 if isempty(c0); c0 = 1; end
 
 if ~exist('n', 'var'); n = []; end
-if isempty(n); n = 3.5; end  % controls interpolation function
+if isempty(n); n = 2.5; end  % controls interpolation function
 %-------------------------------------%
+
+disp('Running INTAC...');  % add header to console
 
 pow = eta .* nu;  % combined power
 
@@ -31,7 +33,7 @@ qmodel = @(x, qvec) (1 + (c0 ^ nu * q0 .* x .^ pow) .^ n) .^ (1/n);  % average c
 [xbar, qbar] = ac.iac(x_star, qmodel);
 %}
 
-%-{
+%{
 % Use specifically-derived Newton's method.
 a = (c0 ^ nu * q0 .* x_star .^ pow) .^ n;
 qmodel = @(x) -x + (a .* x .^ (pow*n) + 1) .^ (1/n);
@@ -49,5 +51,11 @@ end
 qbar = y1;
 xbar = qbar .* x_star;
 %}
+
+xbar = (x_star .^ n + (c0 .^ nu .* q0 .* x_star) .^ (n ./ (1 - pow))) .^ (1 ./ n);
+qbar = xbar ./ x_star;
+
+tools.textdone();  % mark as complete
+disp(' ');
 
 end
