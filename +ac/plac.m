@@ -49,17 +49,18 @@ if p > 0.8
     xbar = NaN(size(xbar));
 end
 
+% Additional output: a function handle for qbar.
+qfun = @(x_star) (c0 .^ nu .* q0 .* x_star) ...
+    .^ (1 ./ (1 - p)) ./ x_star;
+
+tools.textdone();  % mark as complete (done before below for alignment)
+
+% Truncate unrealistic values and issue warning.
 qlim = 1.2;
 if any(qbar < qlim)
     warning(['Average charges below ', num2str(qlim), ' truncated.']);
     qbar(qbar < qlim) = NaN;
 end
-
-% Additional output: a function handle for qbar.
-qfun = @(x_star) (c0 .^ nu .* q0 .* x_star) ...
-    .^ (1 ./ (1 - p)) ./ x_star;
-
-tools.textdone();  % mark as complete
 disp(' ');
 
 end

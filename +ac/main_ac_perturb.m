@@ -57,8 +57,8 @@ m_bar_t0 = ac.true([], K0, m);
 m_bar_g0 = exp(ac.true([], K0, log(m)));
 
 % Run the IAC algorithm with default settings. 
-% [m_bar_iac0, q_bar_iac0] = ...
-%     ac.iac_m(m_star, prop0, [], charge_type, opt0);
+[m_bar_iac0, q_bar_iac0] = ...
+    ac.iac_m(m_star, prop0, [], charge_type, opt0);
 
 % Run the FTFAC algorithm with default settings. 
 [m_bar_ftfac0, q_bar_ftfac0] = ...
@@ -77,7 +77,7 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 figure(1); clf;
 
 subplot(5, 1, 1:3);
-% plot(m_star, m_bar_iac0);
+plot(m_star, m_bar_iac0);
 hold on;
 plot(m_star, m_bar_ftfac0);
 plot(m_star, m_bar_intac0);
@@ -89,7 +89,7 @@ set(gca, 'XScale', 'log', 'YScale', 'log');
 ylim([1e-4, 1e2]);
 
 subplot(5, 1, 4:5);
-% plot(m_star, (m_bar_iac0 - m_bar_t0) ./ m_bar_t0);
+plot(m_star, (m_bar_iac0 - m_bar_t0) ./ m_bar_t0);
 hold on;
 plot(m_star, (m_bar_ftfac0 - m_bar_t0) ./ m_bar_t0);
 plot(m_star, (m_bar_fcfac0 - m_bar_t0) ./ m_bar_t0);
@@ -110,11 +110,11 @@ set(gca, 'XScale', 'log');
 % Range of configuration file specifying perturbation scenarios. 
 % cfg = tools.load_config('+ac/config/v2.sig1.json');
 % cfg = tools.load_config('+ac/config/v1.mu.json');
-cfg = tools.load_config('+ac/config/v1.Rm.json');
+% cfg = tools.load_config('+ac/config/v1.Rm.json');
 % cfg = tools.load_config('+ac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
 % cfg = tools.load_config('+ac/config/v1.nit.b.json');
-% cfg = tools.load_config('+ac/config/v1.eps.b.json');
+cfg = tools.load_config('+ac/config/v1.eps.b.json');
 % cfg = tools.load_config('+ac/config/v1.mm.b.json');
 
 % If not a field, both = 0. 
@@ -202,7 +202,7 @@ for kk=1:sz
             
             % Run the FCFAC algorithm. 
             [m_bar_fcfac(kk,:), q_fcfac] = ...
-                ac.fcfac(m_star, fq, m, z);
+                ac.fcfac(m_star, fq, m, zvec');
             
             % Run the PLAC algorithm with default settings. 
             [m_bar_plac(kk,:), q_bar_plac] = ...
