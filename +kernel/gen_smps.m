@@ -33,7 +33,7 @@ n_b = length(d_star);
 n_i = length(d);
 
 %== Evaluate particle charging fractions =================================%
-f_z = sparse(kernel.tfer_charge(d.*1e-9, z)); % get fraction charged for d
+f_z = sparse(kernel.tfer_charge(d .* 1e-9, z, [], varargin{:})); % get fraction charged for d
 n_z = length(z);
 
 
