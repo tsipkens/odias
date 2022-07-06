@@ -2,6 +2,6 @@
     "perturb": "nit",
     "both": 1, 
     "scan": [0.1,0.4,1,4], 
-    "n": [], 
+    "n": 1.75, 
     "tfer_type": "1C_diff"  // transfer function type
 }
