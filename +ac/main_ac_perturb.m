@@ -1,7 +1,6 @@
 
 % MAIN_AC_PERTURB  A function perturbing the AC inputs for a PMA. 
 
-
 clear;
 close all;
 addpath cmap tfer_pma autils;
@@ -25,6 +24,7 @@ charge_type = 'Fuchs';
 opt0.nit = nit;
 opt0.eps = eps0;
 opt0.geo = 1;  % compute geometric mean in IAC
+opt0.n = 2.5;
 
 
 % Set transfer function evaluation grid.
@@ -70,7 +70,7 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 [m_bar_plac0, q_bar_plac0] = ...
     ac.plac(m_star, nu0, qp0, prop0);
 [m_bar_intac0, q_bar_intac0] = ...
-    ac.intac(m_star, nu0, qp0, prop0);  % instead solved with IAC
+    ac.intac(m_star, nu0, qp0, prop0, opt0.n);  % instead solved with IAC
 
 
 % Plot errors at default.
@@ -111,10 +111,11 @@ set(gca, 'XScale', 'log');
 % cfg = tools.load_config('+ac/config/v2.sig1.json');
 % cfg = tools.load_config('+ac/config/v1.mu.json');
 % cfg = tools.load_config('+ac/config/v1.Rm.json');
-% cfg = tools.load_config('+ac/config/v1.mm.rho.json');
+cfg = tools.load_config('+ac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
 % cfg = tools.load_config('+ac/config/v1.nit.b.json');
-cfg = tools.load_config('+ac/config/v1.eps.b.json');
+% cfg = tools.load_config('+ac/config/v1.nit.b.n175.json');  % sets n = 1.75
+% cfg = tools.load_config('+ac/config/v1.eps.b.json');
 % cfg = tools.load_config('+ac/config/v1.mm.b.json');
 
 % If not a field, both = 0. 
@@ -155,6 +156,7 @@ for kk=1:sz
         opt = opt0;
         if strcmp(cfg.perturb, 'nit')
             opt.nit = scan_vec(kk) .* 1e13;
+            opt.n = cfg.n;
         end
         if strcmp(cfg.perturb, 'eps0')
             opt.eps = scan_vec(kk);
@@ -260,16 +262,21 @@ end
 
 
 %== START figures ========================================================%
+figure(11);
+plot(m_star, m_bar_t, 'k');
+hold on;
+plot(m_star, m_bar_intac);
+plot(m_star, m_star, 'k--');
+hold off;
+set(gca, 'XScale', 'log', 'YScale', 'log');
+
 figure(10);
 plot(m_star, (m_bar_plac - m_bar_t) ./ m_bar_t, 'k');
 hold on;
 % plot(m_star, (m_star' - m_bar_t(1,:)) ./ m_bar_t(1,:), 'k');
 plot(m_star, (m_bar_intac - m_bar_t) ./ m_bar_t);
 % plot(m_star, (m_bar_ftfac - m_bar_t) ./ m_bar_t, '--');
-yline(0, 'k--');
 ylim([-0.2, 0.1]);
 hold off;
 set(gca, 'XScale', 'log');
-
-
 

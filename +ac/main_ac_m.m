@@ -1,5 +1,5 @@
 
-% MAIN_IAC_M  A function evaluating the iterative-average charge algorithm.
+% MAIN_AC_M  A function evaluating the average charge algorithms for PMAs.
 %  Allows for a quick check of methods for specific m_star.
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
