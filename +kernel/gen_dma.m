@@ -1,5 +1,5 @@
 
-% GEN_SMPS  Evaluates the transfer function of a differential mobility analyzer.
+% GEN_DMA  Evaluates the transfer function of a differential mobility analyzer.
 % 
 %  INPUTS:
 %   d_star              Particle diameter, measurement set point for DMA [m]
@@ -18,14 +18,17 @@
 %  
 %  AUTHOR:	Timothy Sipkens, 2020-03-09
 
-function [Omega] = gen_smps(d_star, d, z, varargin)
+function [Omega] = gen_dma(d_star, d, z, argin_dma, varargin)
 
 
 %-- Parse inputs -----------------%
 if ~exist('z', 'var'); z = []; end
 if isempty(z); z = (1:4)'; end
 
-% The rest are passed to/assigned in tfer_dma.
+if ~exist('argin_dma', 'var') argin_dma = {}; end
+if ~iscell(argin_dma); argin_dma = {argin_dma}; end
+
+% the rest of the arguments are passed to kernel.tfer_charge(...)
 %---------------------------------%
 
 
@@ -45,7 +48,7 @@ for kk=1:n_z  % loop through charge states
     Omega_z = kernel.tfer_dma( ...
         d_star' .* 1e-9, ...
         d .* 1e-9, ...
-        z(kk), varargin{:});
+        z(kk), argin_dma{:});
     
     % Remove numerical noise in kernel.
     Omega_z(Omega_z<(1e-7.*max(max(Omega_z)))) = 0;

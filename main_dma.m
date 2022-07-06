@@ -13,7 +13,7 @@ d_star = logspace(log10(10), log10(1e3), 80)';  % mobility setpoints
 prop = kernel.prop_dma;
 
 
-A = kernel.gen_smps(d_star, d, [], prop);
+A = kernel.gen_dma(d_star, d, [], prop);
 
 
 mu_d = [200, 200/3];
