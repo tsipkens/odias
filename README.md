@@ -7,7 +7,7 @@ This MATLAB program is designed to invert aerosol size distributions for a range
 
 ## Setup
 
-This program has three dependences that are included as git submodules: 
+This program has three dependencies that are included as git submodules: 
 
 1. The **tfer_pma** submodule, available at https://github.com/tsipkens/mat-tfer-pma, contains MATLAB code to compute the transfer function of particle mass analyzers (including the centrifugal particle mass analyzer and aerosol particle mass analyzer) and to compute basic aerosol properties. Functions in this submodule are necessary to compute the kernel (the quantity that related aerosol measurements  by a range of instruments to their underlying particle size distributions). As such, while this package is primarily necessary if considering particle mass analyzer transfer functions, the package also includes basic functions for computing particle mobility necessary for computing the DMA transfer function. 
 
