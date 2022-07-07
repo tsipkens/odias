@@ -14,8 +14,9 @@ if isempty(q); q = 0:(size(fq, 2) - 1); end
 
 disp('Running FCFAC...');  % add header to console
 
-% Compute charge fractions at x*q. 
-fq_star = interp2(x, q, fq, x_star .* q, ones(size(x_star)) .* q);
+% Compute charge fractions at x*q.
+fq_star = interp2(x, q, fq, ...
+    x_star .* q, ones(size(x_star)) .* q);
 
 % Get average charge. 
 % nansum's ignore fq where extrapolation would be required above.  
