@@ -5,12 +5,13 @@
 
 clear;
 close all;
-addpath cmap tfer_pma;
+addpath cmap tfer_pma autils;
 
 m = logspace(-3, 2, 500)';  % reconstruction points
 m_star = logspace(-3, 2, 80)';  % mass-to-charge setpoints
 
 prop = kernel.prop_pma;
+prop = massmob.add(prop, 'soot');
 d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % get mobility diameters
 
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', 3);

@@ -62,9 +62,9 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 
 % Run the FTFAC algorithm with default settings. 
 [m_bar_ftfac0, q_bar_ftfac0] = ...
-    ac.ftfac(m_star, Kq0, zvec');
+    ac.ftf(m_star, Kq0, zvec');
 [m_bar_fcfac0, q_bar_fcfac0] = ...
-    ac.fcfac(m_star, fq0, m, zvec');
+    ac.fcf(m_star, fq0, m, zvec');
 
 % Run the PLAC algorithm with default settings. 
 [m_bar_plac0, q_bar_plac0] = ...
