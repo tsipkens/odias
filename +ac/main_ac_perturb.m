@@ -1,5 +1,9 @@
 
 % MAIN_AC_PERTURB  A function perturbing the AC inputs for a PMA. 
+%  
+%  Includes Fig. 2-4 in current draft.
+%  
+%  AUTHOR: Timothy Sipkens, 2022-06
 
 clear;
 close all;

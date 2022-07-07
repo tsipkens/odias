@@ -2,6 +2,8 @@
 % MAIN_AC_M  A function evaluating the average charge algorithms for PMAs at limited m_star.
 %  Allows for a quick check of methods for specific m_star.
 %  
+%  Includes Fig. 1 in current draft.
+%  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
 clear;
@@ -92,7 +94,8 @@ pr = ones(size(m));  % no size distribution
 % Alternatively, add a lognormal size distribution.
 gsmd = 1.8;  % GSD for mobility
 gsm = exp(prop.zet * log(gsmd));  % GSD with respect to mass
-pr = normpdf(log(m), log(0.3801), log(gsm));  % alternate size distribution
+gmd = 0.3;
+pr = normpdf(log(m), log(gmd), log(gsm));  % alternate size distribution
 %}
 
 [m_t, m_t_geo] = ac.true(m_star, K, m, pr);
@@ -114,6 +117,9 @@ table(m_star, m_fcf, q_fcf)
 % Run PLAC algorithm.
 [m_plac, q_plac, qfun_plac] = ac.plac(m_star, nu, q0, prop);
 table(m_star, m_plac, q_plac)
+
+[m_intac, q_intac] = ac.intac(m_star, nu, q0, prop, 2.5);
+table(m_star, m_intac, q_intac)
 
 
 figure(2);
