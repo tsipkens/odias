@@ -52,14 +52,9 @@ tools.textheader('Computing kernel')
 tools.textheader();
 
 % Get power law fit.
-fl = qbar0 > 4;  % flag higher charge states
-A = [log(d(fl)), ones(size(d(fl)))];
-b = log(qbar0(fl));
-p = (A' * A) \ (A' * b);
-nu = p(1)
-q0 = exp(p(2))
-qbarh = q0 .* d .^ nu;
+[nu, q0] = ac.get_power_law(qbar0, d);
 
+qbarh = q0 .* d .^ nu;
 qbarl = ones(size(d));
 
 n = 3;
@@ -102,12 +97,12 @@ table(m_star, m_t, m_t_geo)
 table(m_star, m_iac, q_iac)
 
 % Run FTFAC algorithm.
-[m_ftfac, q_ftfac] = ac.ftfac(m_star, Kq, z);
-table(m_star, m_ftfac, q_ftfac)
+[m_ftf, q_ftf] = ac.ftf(m_star, Kq, z);
+table(m_star, m_ftf, q_ftf)
 
 % Run FCFAC algorithm.
-[m_fcfac, q_fcfac] = ac.fcfac(m_star, fq, m, z);
-table(m_star, m_fcfac, q_fcfac)
+[m_fcf, q_fcf] = ac.fcf(m_star, fq, m, z);
+table(m_star, m_fcf, q_fcf)
 
 % Run PLAC algorithm.
 [m_plac, q_plac, qfun_plac] = ac.plac(m_star, nu, q0, prop);
@@ -117,8 +112,8 @@ table(m_star, m_plac, q_plac)
 figure(2);
 plot(m_star, q_iac, 'or');
 hold on;
-plot(m_star, q_ftfac, 'o');
-plot(m_star, q_fcfac, '^');
+plot(m_star, q_ftf, 'o');
+plot(m_star, q_fcf, '^');
 plot(m_star, q_plac, 'ok');
 plot(m, qfun_plac(m), 'k--');
 plot(m, qbar0);  % map mass to charge directly (as opposed to transmitted)
