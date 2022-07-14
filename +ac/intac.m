@@ -4,16 +4,16 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
-function [xbar, qbar] = intac(x_star, nu, q0, eta, c0, n)
+function [xbar, qbar] = intac(x_star, nu, q0, bet, c0, n)
 
 %-- Parse inputs ----------------------%
-if ~exist('eta', 'var'); eta = []; end
-if isempty(eta); eta = 1; end
+if ~exist('bet', 'var'); bet = []; end
+if isempty(bet); bet = 1; end
 
-if isstruct(eta)  % if mass-mobility property struct
-    prop = eta;
+if isstruct(bet)  % if mass-mobility property struct
+    prop = bet;
     c0 = (1 / (prop.k * 1e18)) ^ (1 / prop.zet);
-    eta = 1 / prop.zet;
+    bet = 1 / prop.zet;
 end
 
 if ~exist('c0', 'var'); c0 = []; end
@@ -25,7 +25,7 @@ if isempty(n); n = 2.5; end  % controls interpolation function
 
 disp('Running INTAC...');  % add header to console
 
-pow = eta .* nu;  % combined power
+pow = bet .* nu;  % combined power
 
 %{
 % Use IAC method.

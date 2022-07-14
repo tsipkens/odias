@@ -10,8 +10,8 @@
 %  struct, PROP. Computes the average transmitted particle mass. Assumes 
 %  the mobility and charge-equivalent diameters are the same. 
 %  
-%  XBAR = ac.plac(X_STAR, NU, Q0, ETA, C0) allows for explicitly specifying
-%  the power law exponent ETA and pre-factor C0 in relating the desired
+%  XBAR = ac.plac(X_STAR, NU, Q0, BET, C0) allows for explicitly specifying
+%  the power law exponent bet and pre-factor C0 in relating the desired
 %  particle size to the charge-equivalent diameter. 
 %  
 %  [XBAR, QBAR] = ac.plac(...) adds an output for the average transmitted
@@ -19,16 +19,16 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
-function [xbar, qbar, qfun] = plac(x_star, nu, q0, eta, c0)
+function [xbar, qbar, qfun] = plac(x_star, nu, q0, bet, c0)
 
 %-- Parse inputs ----------------------%
-if ~exist('eta', 'var'); eta = []; end
-if isempty(eta); eta = 1; end
+if ~exist('bet', 'var'); bet = []; end
+if isempty(bet); bet = 1; end
 
-if isstruct(eta)  % if mass-mobility property struct
-    prop = eta;
+if isstruct(bet)  % if mass-mobility property struct
+    prop = bet;
     c0 = (1 / (prop.k * 1e18)) ^ (1 / prop.zet);
-    eta = 1 / prop.zet;
+    bet = 1 / prop.zet;
 end
 
 if ~exist('c0', 'var'); c0 = []; end
@@ -37,7 +37,7 @@ if isempty(c0); c0 = 1; end
 
 disp('Running PLAC...');  % add header to console
 
-p = eta .* nu;  % combined power
+p = bet .* nu;  % combined power
 
 qbar = (c0 .^ nu .* q0) .^ (1 ./ (1 - p)) .* ...
     x_star .^ (p ./ (1 - p));  % average charge

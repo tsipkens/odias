@@ -1,11 +1,11 @@
 
-% FCFAC  Full charge fraction-average charge algorithm.
+% FCF  Full charge fraction-average charge algorithm.
 %  Not a true average charge function as this method only ignores the
 %  particle size distribution and transfer function. 
 %  
 %  AUTHOR: Timothy Sipkens, 2022-07-05
 
-function [xbar, qbar] = fcfac(x_star, fq, x, q)
+function [xbar, qbar] = fcf(x_star, fq, x, q)
 
 % Use second dimension of A for charges. 
 if ~exist('q', 'var'); q = []; end
