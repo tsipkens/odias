@@ -112,10 +112,10 @@ set(gca, 'XScale', 'log');
 %== START: Perturbation analysis =========================================%
 
 % Range of configuration file specifying perturbation scenarios. 
-% cfg = tools.load_config('+ac/config/v2.sig1.json');
+cfg = tools.load_config('+ac/config/v2.sig1.json');
 % cfg = tools.load_config('+ac/config/v1.mu.json');
 % cfg = tools.load_config('+ac/config/v1.Rm.json');
-cfg = tools.load_config('+ac/config/v1.mm.rho.json');
+% cfg = tools.load_config('+ac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
 % cfg = tools.load_config('+ac/config/v1.nit.b.json');
 % cfg = tools.load_config('+ac/config/v1.nit.b.n175.json');  % sets n = 1.75

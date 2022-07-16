@@ -53,7 +53,6 @@ prop0.k = 1;
 
 % "True" average transmitted particle size.
 d_bar_t = ac.true(d_star, K, d);
-d_bar_t(find(d_bar_t > 0.4 * d(end)):end) = NaN;
 
 [d_bar_fcf, q_bar_fcf] = ac.fcf(d_star, fq, d, z);
 [d_bar_ftf, q_bar_ftf] = ac.ftf(d_star, Kq, z);
