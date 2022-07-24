@@ -103,7 +103,7 @@ if any(model == 'g')
         fn(:,ind) = exp(exponent);
     end
 end
-qbar = [];  % irrelevant for above models
+qbar = sum(fn .* z, 2) ./ sum(fn, 2);
 
 
 if any(model == 'f')
