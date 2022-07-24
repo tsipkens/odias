@@ -15,7 +15,7 @@ Rm = 3;
 nit = 4e13;
 eps = 13.5;
 
-charge_type = 'Fuchs';
+charge_type = 'w';
 
 
 % Set charging model parameters. 
