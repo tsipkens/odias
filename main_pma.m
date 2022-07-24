@@ -39,7 +39,7 @@ hold on;
 tools.gen_data(Ab, m, mu, s, w, m_star);
 hold off;
 
-A = Ab;  % choose which kernel to use
+A = Af;  % choose which kernel to use
 [b, Lb, x0] = tools.gen_data(A, m, mu, s, w);
 
 

@@ -30,14 +30,14 @@ d = logspace(0, log10(4e3), nx)';  % reconstruction points
 d_star = logspace(0.5, 2, 10)';  % mass-to-charge setpoints
 nb = length(d_star);
 
-z = 1:300;
+z = 0:300;
 
 
 % Get properties and then update.
 prop = kernel.prop_dma;  % use default properties
 
 tools.textheader('Computing kernel')
-[K, fq, Kq, qbar0] = kernel.gen_dma(d_star, d, z, [], {'Fuchs', opt});
+[K, fq, Kq, qbar0] = kernel.gen_dma(d_star, d, z, [], {charge_type, opt});
 tools.textheader();
 
 

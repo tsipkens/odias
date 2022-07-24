@@ -8,7 +8,7 @@ close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
-d_star = logspace(log10(10), log10(1e3), 80)';  % mobility setpoints
+d_star = logspace(log10(13.1), log10(763.5), 114)';  % mobility setpoints
 
 prop = kernel.prop_dma;
 
