@@ -1,6 +1,7 @@
 
-% FCF  Full charge fraction-average charge algorithm.
-%  Not a true average charge function as this method only ignores the
+% FCF  Full charge fraction algorithm for computing average charge.
+%  
+%  NOTE: Not a true "average charge" function as this method only ignores the
 %  particle size distribution and transfer function. 
 %  
 %  AUTHOR: Timothy Sipkens, 2022-07-05

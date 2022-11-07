@@ -39,14 +39,11 @@ disp('Running PLAC...');  % add header to console
 
 p = bet .* nu;  % combined power
 
-qbar = (c0 .^ nu .* q0) .^ (1 ./ (1 - p)) .* ...
-    x_star .^ (p ./ (1 - p));  % average charge
-xbar = qbar .* x_star;  % average transmitted particle size
+xbar = (c0 .^ nu .* q0 .* x_star) .^ (1 ./ (1 - p));
+qbar = xbar ./ x_star;  % average transmitted particle size
 
 if p > 0.8
-    warning('Power law average charge will be inaccurate. Returning NaN.');
-    qbar = NaN(size(qbar));
-    xbar = NaN(size(xbar));
+    warning('Power law average charge may be inaccurate.');
 end
 
 % Additional output: a function handle for qbar.

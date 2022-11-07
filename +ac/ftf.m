@@ -8,7 +8,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-02-25
 
-function [xbar, qbar] = ftfac(x_star, Kq, q)
+function [xbar, qbar] = ftf(x_star, Kq, q)
 
 % Use second dimension of A for charges. 
 if ~exist('q', 'var'); q = []; end

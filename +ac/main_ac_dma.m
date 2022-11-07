@@ -12,10 +12,11 @@ addpath cmap autils;
 
 % Defaults.
 Rm = 3;
-nit = 4e13;
+nit = 4e13; % 1e12
 eps = 13.5;
 
-charge_type = 'w';
+charge_type = 'f';
+% charge_type = 'w';  % bipolar
 
 
 % Set charging model parameters. 
@@ -27,7 +28,8 @@ opt.n = 2.5;
 % Set transfer function evaluation grid.
 nx = 1200;
 d = logspace(0, log10(4e3), nx)';  % reconstruction points
-d_star = logspace(0.5, 2, 10)';  % mass-to-charge setpoints
+d_star = logspace(0.5, 1.23, 50)';  % mass-to-charge setpoints
+% d_star = logspace(0.5, 1.73, 50)';  % mass-to-charge setpoints
 nb = length(d_star);
 
 z = 0:300;
@@ -63,6 +65,12 @@ d_bar_t = ac.true(d_star, K, d);
 [d_bar_intac, q_bar_intac] = ...
     ac.intac(d_star, nu, q0, prop0, opt.n);  % instead solved with IAC
 
+a1 = 0.2;
+a2 = 2;
+a3 = 1 ./ q0;
+d_bar_vintac = d_star .* (a1 .* d_star .^ a2 ./ (a3 - d_star) .^ a2 + 1);
+
+
 
 % Plot errors at default.
 figure(1); clf;
@@ -71,8 +79,11 @@ hold on;
 plot(d_star, d_bar_plac, 'o-');
 plot(d_star, d_bar_fcf, 'ro-');
 plot(d_star, d_bar_ftf, 'bo-');
+plot(d_star, d_bar_vintac, 'g-');
 plot(d_star, d_bar_t, 'ko-');
 plot(d_star, d_star, 'k--');
+xline(1 ./ q0);
+xline(1 ./ q0 ./ 2);
 hold off;
 set(gca, 'XScale', 'log', 'YScale', 'log');
 ylim([d_star(1), 1000]);
