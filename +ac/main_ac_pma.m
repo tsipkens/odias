@@ -118,7 +118,7 @@ table(m_star, m_fcf, q_fcf)
 [m_plac, q_plac, qfun_plac] = ac.plac(m_star, nu, q0, prop);
 table(m_star, m_plac, q_plac)
 
-[m_intac, q_intac] = ac.intac(m_star, nu, q0, prop, 2.5);
+[m_intac, q_intac] = ac.intac(m_star, nu, q0, prop);
 table(m_star, m_intac, q_intac)
 
 

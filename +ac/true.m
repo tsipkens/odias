@@ -1,9 +1,11 @@
 
 % TRUE  Computes the transfer function-weighted average transmitted charge.
-%  This is not an average charge method as defined by Sipkens et al. in
+%  Incorporates the size distribution via the P input. 
+%  
+%  This is not an "average charge" method as defined by Sipkens et al. in
 %  that the average transmitted particle size is computed directly. 
 %  
-%  NOTE: First argument is a placeholder for X_STA, which is only included 
+%  NOTE: First argument is a placeholder for X_STAR, which is only included 
 %  to match the pattern of the other average charge function. However, the
 %  value is not used in this method.
 %  

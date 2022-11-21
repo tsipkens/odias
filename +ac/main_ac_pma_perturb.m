@@ -36,7 +36,7 @@ nx = 1e3;  nb = 700;
 m = logspace(-4.5, 2, nx)';  % reconstruction points
 m_star = logspace(-4, 0, nb)';  % mass-to-charge setpoints
 
-zvec = (1:300)';
+zvec = 1:300;
 
 % Get properties and then update.
 prop0 = kernel.prop_pma;
@@ -66,9 +66,9 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 
 % Run the FTFAC algorithm with default settings. 
 [m_bar_ftfac0, q_bar_ftfac0] = ...
-    ac.ftf(m_star, Kq0, zvec');
+    ac.ftf(m_star, Kq0, zvec);
 [m_bar_fcfac0, q_bar_fcfac0] = ...
-    ac.fcf(m_star, fq0, m, zvec');
+    ac.fcf(m_star, fq0, m, zvec);
 
 % Run the PLAC algorithm with default settings. 
 [m_bar_plac0, q_bar_plac0] = ...
@@ -204,11 +204,11 @@ for kk=1:sz
         if cfg.both == 1
             % Run the FTFAC algorithm. 
             [m_bar_ftfac(kk,:), q_bar_ftfac] = ...
-                ac.ftfac(m_star, Kq, zvec');
+                ac.ftfac(m_star, Kq, zvec);
             
             % Run the FCFAC algorithm. 
             [m_bar_fcfac(kk,:), q_fcfac] = ...
-                ac.fcfac(m_star, fq, m, zvec');
+                ac.fcfac(m_star, fq, m, zvec);
             
             % Run the PLAC algorithm with default settings. 
             [m_bar_plac(kk,:), q_bar_plac] = ...

@@ -17,8 +17,8 @@ if isempty(q); q = 0:(size(Kq, 2) - 1); end
 
 disp('Running FTFAC...');  % add header to console
 
-qbar = sum(sum(Kq, 3) .* q ./ ...
-    sum(sum(Kq, 3), 2), 2);
+qbar = nansum(nansum(Kq, 3) .* q ./ ...
+    nansum(sum(Kq, 3), 2), 2);
 
 xbar = qbar .* x_star;
 
