@@ -64,9 +64,9 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 [m_bar_iac0, q_bar_iac0] = ...
     ac.iac_m(m_star, prop0, [], charge_type, opt0);
 
-% Run the FTFAC algorithm with default settings. 
-[m_bar_ftfac0, q_bar_ftfac0] = ...
-    ac.ftf(m_star, Kq0, zvec);
+% Run the FK algorithm with default settings. 
+[m_bar_fkac0, q_bar_fkac0] = ...
+    ac.fk(m_star, Kq0, zvec);
 [m_bar_fcfac0, q_bar_fcfac0] = ...
     ac.fcf(m_star, fq0, m, zvec);
 
@@ -83,7 +83,7 @@ figure(1); clf;
 subplot(5, 1, 1:3);
 plot(m_star, m_bar_iac0);
 hold on;
-plot(m_star, m_bar_ftfac0);
+plot(m_star, m_bar_fkac0);
 plot(m_star, m_bar_intac0);
 plot(m_star, m_bar_plac0);
 plot(m_star, m_bar_t0, 'k');
@@ -95,7 +95,7 @@ ylim([1e-4, 1e2]);
 subplot(5, 1, 4:5);
 plot(m_star, (m_bar_iac0 - m_bar_t0) ./ m_bar_t0);
 hold on;
-plot(m_star, (m_bar_ftfac0 - m_bar_t0) ./ m_bar_t0);
+plot(m_star, (m_bar_fkac0 - m_bar_t0) ./ m_bar_t0);
 plot(m_star, (m_bar_fcfac0 - m_bar_t0) ./ m_bar_t0);
 plot(m_star, (m_bar_intac0 - m_bar_t0) ./ m_bar_t0);
 plot(m_star, (m_bar_plac0 - m_bar_t0) ./ m_bar_t0);
@@ -140,7 +140,7 @@ sz = max(size(scan_vec));
 
 m_bar_iac = [];
 m_bar_t = [];
-m_bar_ftfac = [];
+m_bar_fkac = [];
 m_bar_fcfac = [];
 m_bar_plac = [];
 m_bar_intac = [];
@@ -202,9 +202,9 @@ for kk=1:sz
         m_bar_t(kk,:) = ac.true([], K, m);
         
         if cfg.both == 1
-            % Run the FTFAC algorithm. 
-            [m_bar_ftfac(kk,:), q_bar_ftfac] = ...
-                ac.ftfac(m_star, Kq, zvec);
+            % Run the FK algorithm. 
+            [m_bar_fkac(kk,:), q_bar_fkac] = ...
+                ac.fkac(m_star, Kq, zvec);
             
             % Run the FCFAC algorithm. 
             [m_bar_fcfac(kk,:), q_fcfac] = ...
@@ -219,7 +219,7 @@ for kk=1:sz
         % ELSE: Perturb only the true average mass, thereby assessing what
         % happens when the assumed model parameters are incorrect.
         else
-            m_bar_ftfac(kk,:) = m_bar_ftfac0;
+            m_bar_fkac(kk,:) = m_bar_fkac0;
             m_bar_fcfac(kk,:) = m_bar_fcfac0;
             m_bar_plac(kk,:) = m_bar_plac0;
             m_bar_intac(kk,:) = m_bar_intac0;
@@ -241,7 +241,7 @@ for kk=1:sz
         sigk = exp(prop0.zet .* log(sigk));  % convert to mass
         
         % m_bar_iac(kk,:) = m_bar_iac0;
-        m_bar_ftfac(kk,:) = m_bar_ftfac0;
+        m_bar_fkac(kk,:) = m_bar_fkac0;
         m_bar_fcfac(kk,:) = m_bar_fcfac0;
         
         p = normpdf(log(m), log(muk), log(sigk));
@@ -279,7 +279,7 @@ plot(m_star, (m_bar_plac - m_bar_t) ./ m_bar_t, 'k');
 hold on;
 % plot(m_star, (m_star' - m_bar_t(1,:)) ./ m_bar_t(1,:), 'k');
 plot(m_star, (m_bar_intac - m_bar_t) ./ m_bar_t);
-% plot(m_star, (m_bar_ftfac - m_bar_t) ./ m_bar_t, '--');
+% plot(m_star, (m_bar_fkac - m_bar_t) ./ m_bar_t, '--');
 ylim([-0.2, 0.1]);
 hold off;
 set(gca, 'XScale', 'log');

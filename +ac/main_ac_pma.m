@@ -106,9 +106,9 @@ table(m_star, m_t, m_t_geo)
     ac.iac_m(m_star, prop, [], charge_type, opt);
 table(m_star, m_iac, q_iac)
 
-% Run FTFAC algorithm.
-[m_ftf, q_ftf] = ac.ftf(m_star, Kq, z);
-table(m_star, m_ftf, q_ftf)
+% Run FK algorithm.
+[m_fk, q_fk] = ac.fk(m_star, Kq, z);
+table(m_star, m_fk, q_fk)
 
 % Run FCFAC algorithm.
 [m_fcf, q_fcf] = ac.fcf(m_star, fq, m, z);
@@ -125,7 +125,7 @@ table(m_star, m_intac, q_intac)
 figure(2);
 plot(m_star, q_iac, 'or');
 hold on;
-plot(m_star, q_ftf, 'o');
+plot(m_star, q_fk, 'o');
 plot(m_star, q_fcf, '^');
 plot(m_star, q_plac, 'ok');
 plot(m, qfun_plac(m), 'k--');

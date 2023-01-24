@@ -87,7 +87,7 @@ prop0.k = 1;
 d_bar_t = ac.true(d_star, K, d);
 
 [d_bar_fcf, q_bar_fcf, fq_star] = ac.fcf(d_star, fq, d, z);
-[d_bar_ftf, q_bar_ftf] = ac.ftf(d_star, Kq, z);
+[d_bar_fk, q_bar_fk] = ac.fk(d_star, Kq, z);
 
 % Run the PLAC algorithm with default settings. 
 [d_bar_plac, q_bar_plac] = ...
@@ -124,7 +124,7 @@ plot(d_star, d_bar_intac, 'k-');
 hold on;
 plot(d_star, d_bar_plac, '-');
 plot(d_star, d_bar_fcf, 'ro-');
-plot(d_star, d_bar_ftf, 'bo-');
+plot(d_star, d_bar_fk, 'bo-');
 plot(d_star, d_bar_vintac, 'g-');
 plot(d_star, d_bar_t, 'ko-');
 plot(d_star, d_star, 'k--');
@@ -154,7 +154,7 @@ c0 = sqrt(1 / exp(p(2)));
     ac.intac(ddr_star, nu, q0, bet, c0, opt.n);  % instead solved with IAC
 
 [Dr_bar_fcf, q_bar_fcf, fq_star] = ac.fcf(ddr_star, fq, ddr, z);
-[Dr_bar_ftf, q_bar_ftf] = ac.ftf(ddr_star, Kq, z);
+[Dr_bar_fk, q_bar_fk] = ac.fk(ddr_star, Kq, z);
 
 
 figure(11); clf;
@@ -162,7 +162,7 @@ plot(ddr_star, Dr_bar_intac, 'k-');
 hold on;
 plot(ddr_star, Dr_bar_plac, '-');
 plot(ddr_star, Dr_bar_fcf, 'ro-');
-plot(ddr_star, Dr_bar_ftf, 'bo');
+plot(ddr_star, Dr_bar_fk, 'bo');
 % plot(Dr_star, Dr_bar_t, 'ko-');
 % plot(Dr_star, Dr_star, 'k--');
 hold off;
