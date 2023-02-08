@@ -56,7 +56,7 @@ end
 		
 % Mobility equivalent diameter
 d_me_array = logspace(log10(4), log10(2e3), 120);
-d_me_array = d_me_array([40,50,100]);
+d_me_array = d_me_array([1,40,65]);
 
 meancharge_d =[];
 for i = 1:length(d_me_array)
@@ -206,7 +206,7 @@ end
 
 function out = Cc(Kn,alpha,beta,gamma)
 
-out = 1+Kn*(alpha+beta*exp(-gamma/Kn));
+out = 1 + Kn*(alpha+beta*exp(-gamma/Kn));
 
 end
 
@@ -221,11 +221,9 @@ rmin = log10(1);
 
 if (psiI == 0)
 	rc = 1;
-	ro = 100;
 else
-	rc = newton_raphson_maxima_repulsive([], psiE, psiI);
+	rc = newton_raphson_maxima_repulsive(psiE, psiI);
 end
-
 
 phi_c = pot(rc, psiE, psiI);
 rmax=log10(1d2);
@@ -256,31 +254,31 @@ end
 
 
 
-function x2 = newton_raphson_maxima_repulsive(~,psiE,psiI)
+function r2 = newton_raphson_maxima_repulsive(psiE, psiI)
 
-x1 = 1e2;
-residue = 1e0;
-while (residue > 1e-6) 
-	x2 = x1 - f(x1,psiE,psiI)/df(x1,psiE,psiI);
-	residue = abs((x2-x1)/x1);
-	x1 = x2;
+r1 = 100;
+residue = 1;
+while (residue > 1e-6)  % iterate until convergence
+	r2 = r1 - f(r1, psiE, psiI) / df(r1,psiE, psiI);
+	residue = abs((r2 - r1) / r1);
+	r1 = r2;
 end
 
 end
 
-function out = f(x,psiE,psiI)
+function out = f(x, psiE, psiI)
 
-out = psiE*(x^5)-2*psiE*(x^3)+2*psiI*x*x+psiE*x-psiI;
-
-end
-
-function out = df(x,psiE,psiI)
-
-out = 5*psiE*(x^4)-6*psiE*x*x+4*psiI*x+psiE;
+out = psiE*(x^5) - 2*psiE*(x^3) + 2*psiI*x*x + psiE*x - psiI;
 
 end
 
-function out = pot(r,psiE,psiI)
+function out = df(x, psiE, psiI)
+
+out = 5*psiE*(x^4) - 6*psiE*x*x + 4*psiI*x + psiE;
+
+end
+
+function out = pot(r, psiE, psiI)
 
 if (psiI == 0e0)
     out = -psiE/r;
