@@ -84,6 +84,8 @@ for i = 1:length(d_me_array)
     m_i = mwt_ion/N_av;
     f_i = ni*e/zp_ion;
     
+    % Adjust npmax depending on the particle size. 
+    % This could cause discontinuities depending on the conditions.
     if (d_me*1e9 <= 10)
 	    npmax = 5;
     elseif (d_me*1e9 <= 50)
@@ -196,10 +198,7 @@ end
 
 function out = product_term(collkernelratio, ~, np)
 
-out = 1;
-for ni=1:np-1
-	out = out*collkernelratio(ni + 1);
-end
+out = prod(collkernelratio(2:np));
 
 end
 
