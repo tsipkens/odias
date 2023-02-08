@@ -210,7 +210,6 @@ out = 1 + Kn*(alpha+beta*exp(-gamma/Kn));
 end
 
 
-
 function out = eta_fm_repulsive(psiE, psiI)
 
 dv = 1e-4;
@@ -230,19 +229,22 @@ rmax=log10(1d2);
 vmin=log10(phi_c^0.5);
 vmax=log10(1d2); % represents infinity
 
-out = 0e0;
+out = 0;
 v = vmin;
 v_prev = vmin - dv;
 while (v <= vmax)
 	b = 1e99;
 	r = rmax;
-	linv=(10^v);
+	linv = (10^v);
 	while (r >= rmin)
 		linr = 10 ^ r;
-		b = min((linr*linr*(1-(1/linv/linv*pot(linr,psiE,psiI))))^0.5,b);
+		b = min(...
+            (linr*linr*(1-(1/linv/linv*pot(linr,psiE,psiI))))^0.5,...
+            b);
 		r = r - dr;
 	end
-	term = 2*linv*linv*linv*exp(-linv*linv)*b*b*(10^v-10^v_prev);
+	term = 2*linv*linv*linv*exp(-linv*linv)*b*b*...
+        (10^v - 10^v_prev);
 	out = out + term;
 
     v_prev = v;
