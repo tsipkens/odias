@@ -99,8 +99,8 @@ for i = 1:length(d_me_array)
     kndarray = [];
     collkernel = [];
     for np=0:NPMAX
-	    psiE = -np*ni*(e^2)/(4*pi*eps*k*T*Rs);
-	    psiI =  ((ni*e)^2)/(4*pi*dielec*eps*k*T*Rs);
+	    psiE=-np*ni*(e^2)/(4*pi*eps*k*T*Rs);
+	    psiI= ((ni*e)^2)/(4*pi*dielec*eps*k*T*Rs);
 	    
 	    psiEarray(np+1) = psiE;
 	    psiIarray(np+1) = psiI;
@@ -187,8 +187,12 @@ end
 
 function out = diff_product(collkernelratio,~,nj,np)
 
-fl = (0:np) ~= nj;
-out = prod(collkernelratio(fl) - collkernelratio(nj + 1));
+out = 1;
+for ni = 0:np
+    if ni ~= nj
+        out = out * (collkernelratio(ni + 1) - collkernelratio(nj + 1));
+    end
+end
 
 end
 
