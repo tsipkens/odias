@@ -224,25 +224,23 @@ else
 end
 
 phi_c = pot(rc, psiE, psiI);
-rmax=log10(1d2);
+rmax = log10(100);
+rvec = rmax:-dr:rmin;
+linr = 10 .^ rvec;
 
-vmin=log10(phi_c^0.5);
-vmax=log10(1d2); % represents infinity
+vmin = log10(sqrt(phi_c));
+vmax = log10(1d2); % represents infinity
+vvec = vmin:dv:vmax;
 
 out = 0;
 v = vmin;
 v_prev = vmin - dv;
 while (v <= vmax)
-	b = 1e99;
 	r = rmax;
 	linv = (10^v);
-	while (r >= rmin)
-		linr = 10 ^ r;
-		b = min(...
-            (linr*linr*(1-(1/linv/linv*pot(linr,psiE,psiI))))^0.5,...
-            b);
-		r = r - dr;
-	end
+	
+    b = min(sqrt(linr.^2 .* (1 - (pot(linr,psiE,psiI) ./ (linv^2)))));
+
 	term = 2*linv*linv*linv*exp(-linv*linv)*b*b*...
         (10^v - 10^v_prev);
 	out = out + term;
@@ -281,10 +279,10 @@ end
 
 function out = pot(r, psiE, psiI)
 
-if (psiI == 0e0)
-    out = -psiE/r;
+if (psiI == 0)
+    out = -psiE./r;
 else
-    out = -psiE/r - psiI/2/r/r/(r*r-1);
+    out = -psiE./r - psiI ./ 2 ./ r ./ r ./ (r.*r - 1);
 end
 
 end
