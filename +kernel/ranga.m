@@ -21,29 +21,28 @@ alpha = 1.257e0; beta = 4e-1; gamma=1.1e0;
 
 % ion properties
 MODEL = 'SIPKENS'
-ni=1;
+ni = 1;
 
 % particle properties
 PA_nd=3.14159e0; Rs_nd=1e0; % dimless, dimless
 dielec=13.5; georatio=10;
 STARTnt=1.0d12; ENDnt=1.0d13; TAG='06P76D12';
-NPMAX=10
 
 	
 if strcmp(MODEL, 'MOHSEN')
     
-    Mwt_ion=0.1
-    zp_ion=1.9d-4 % kg/mole, m^2/s/V
+    Mwt_ion = 0.1
+    zp_ion  = 1.9d-4 % kg/mole, m^2/s/V
 
 elseif strcmp(MODEL, 'VOHRAA')
     
-    mwt_ion=0.05
-    zp_ion=1.9d-4 % kg/mole, m^2/s/V
+    mwt_ion = 0.05
+    zp_ion  = 1.9d-4 % kg/mole, m^2/s/V
 
 elseif strcmp(MODEL, 'SIPKENS')
     
-    mwt_ion=0.109
-    zp_ion=1.4d-4 % kg/mole, m^2/s/V
+    mwt_ion = 0.109
+    zp_ion  = 1.4d-4 % kg/mole, m^2/s/V
 	
 end
 	
@@ -79,43 +78,43 @@ for i = 1:length(d_me_array)
     f_i=ni*e/zp_ion;
     
     if (d_me*1e9 <= 10)
-	    NPMAX = 5;
+	    npmax = 5;
     elseif (d_me*1e9 <= 50)
-	    NPMAX = 10;
+	    npmax = 10;
     elseif (d_me*1e9 <= 400)
-	    NPMAX = 20;
+	    npmax = 20;
     elseif (d_me*1e9 <= 800)
-	    NPMAX = 50;
+	    npmax = 50;
     elseif (d_me*1e9 <= 1200)
-	    NPMAX = 100;
+	    npmax = 100;
     else
-	    NPMAX = 300;
+	    npmax = 300;
     end
     
     psiEarray = [];
     psiIarray = [];
     etafarray = [];
     etacarray = [];
-    kndarray = [];
+    KnDarray = [];
     collkernel = [];
-    for np=0:NPMAX
-	    psiE=-np*ni*(e^2)/(4*pi*eps*k*T*Rs);
-	    psiI= ((ni*e)^2)/(4*pi*dielec*eps*k*T*Rs);
+    for np=0:npmax
+	    psiE = -np*ni*(e^2)/(4*pi*eps*k*T*Rs);
+	    psiI =  ((ni*e)^2)/(4*pi*dielec*eps*k*T*Rs);
 	    
 	    psiEarray(np+1) = psiE;
 	    psiIarray(np+1) = psiI;
     
-	    if ((psiE == 0) && (psiI == 0))
+        if ((psiE == 0) && (psiI == 0))
 		    eta_c = 1;
-	    else
+        else
 		    SI = simpsons_cont(0,0.99999e0,1000,psiE,psiI);
 		    eta_c = 1.0/SI;
         end
     
-	    if ((psiE == 0) && (psiI == 0))
+        if ((psiE == 0) && (psiI == 0))
 		    eta_f = 1e0;
 
-	    elseif (psiI == 0)
+        elseif (psiI == 0)
 		    eta_f = exp(psiE);
     
         else
@@ -135,17 +134,12 @@ for i = 1:length(d_me_array)
         
         KnD=(m_i*k*T)^0.5/(f_i*L_KnD);
         H = (4*pi*(KnD^2) + C1*(KnD^3) + ((8*pi)^0.5)*C2*(KnD^4) )/(1 + C3*KnD + C4*(KnD^2) + C2*(KnD^3) );
-        kndarray(np + 1) = KnD;
+        KnDarray(np + 1) = KnD;
         collkernel(np + 1) = H*L_H3*f_i/m_i;
 	    
     end
-    
-    
-    for np=0:NPMAX
-	    
-	    collkernelratio(np + 1) = collkernel(np + 1)/collkernel(1);
-			    
-    end
+
+    collkernelratio = collkernel ./ collkernel(1);
     
     
     nt = STARTnt;
@@ -156,17 +150,17 @@ for i = 1:length(d_me_array)
         ssfrac(1) = exp(-collkernel(1) * nt);
         sscheck = ssfrac(1);
 	    
-        for np=1:NPMAX
+        for np=1:npmax
 	        
 	        ssfrac(np + 1) = 0;
         
             for nj = 0:np
 	            
-		        dummy1 = diff_product(collkernelratio, NPMAX, nj, np);
+		        dummy1 = diff_product(collkernelratio, npmax, nj, np);
 		        ssfrac(np + 1) = ssfrac(np + 1) + exp(-collkernel(nj + 1)*nt)/dummy1;
             
             end
-	        dummy2 = product_term(collkernelratio, NPMAX, np);
+	        dummy2 = product_term(collkernelratio, npmax, np);
 	        ssfrac(np + 1) = ssfrac(np + 1)*dummy2;
 	        % write(*,*) np, ssfrac(np + 1)
 		        
@@ -187,12 +181,8 @@ end
 
 function out = diff_product(collkernelratio,~,nj,np)
 
-out = 1;
-for ni = 0:np
-    if ni ~= nj
-        out = out * (collkernelratio(ni + 1) - collkernelratio(nj + 1));
-    end
-end
+fl = (0:np) ~= nj;
+out = prod(collkernelratio(fl) - collkernelratio(nj + 1));
 
 end
 
@@ -215,28 +205,28 @@ end
 
 function out = eta_fm_attractive(psiE,psiI)
 
-dv=1e-3; dr=5e-4;
+dv = 1e-3; dr = 5e-4;
 
-out=0e0;
+out = 0e0;
 
-rmin=1+dr;
-rmax=1e2;
-vmin=-5e0;
-vmax=2e0;
+rmin = 1+dr;
+rmax = 1e2;
+vmin = -5e0;
+vmax = 2e0;
 
-v=vmin;
-v_prev=vmin-dv;
+v = vmin;
+v_prev = vmin-dv;
 while (v <= vmax)
-	b=1e99;
-	r=rmax;
-	j=0;
-	linv=(10^v);
+	b = 1e99;
+	r = rmax;
+	j = 0;
+	linv = (10^v);
     while (r >= rmin)
         b2 = r * r * (1-(1/linv/linv*potential(r,psiE,psiI)));
         
-        if (b2 >= 0e0)
-	        b=min(b2^0.5,b);
-	        j=1;
+        if (b2 >= 0)
+	        b = min(b2^0.5,b);
+	        j = 1;
         end
         
         r = r-dr;
@@ -262,7 +252,7 @@ end
 
 function out = potential(r,psiE,psiI)
 
-out = -psiE/r-psiI/2/r/r/(r*r-1);
+out = -psiE/r - psiI/2/r/r/(r*r-1);
 
 end
 
@@ -287,14 +277,14 @@ for i = 2:n
     ti=ti+func(a+i*delx,psiE,psiI);
 end
 
-ti=0.5*delx*(func(a,psiE,psiI)+2*ti+func(b,psiE,psiI));
+ti=0.5*delx*(func(a,psiE,psiI) + 2*ti + func(b,psiE,psiI));
 
 end
 
 function out = func(x,psiE,psiI)
 
-term=-psiE*x-psiI/2*(x^4)/(1-x*x);
-out = exp(term);
+term = -psiE*x-psiI/2*(x^4)/(1-x*x);
+out  = exp(term);
 
 end
 
