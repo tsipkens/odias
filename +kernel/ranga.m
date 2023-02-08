@@ -304,13 +304,15 @@ vmin = -5e0;
 vmax = 2e0;
 
 rvec = rmax:-dr:rmin;
+po = potential(rvec, psiE, psiI);
+vvec = (vmin:dv:vmax)';
 
 v = vmin;
 v_prev = vmin - dv;
 while (v <= vmax)
 	linv = (10^v);
     
-    b = rvec .* rvec .* (1-(1/linv/linv .* potential(rvec,psiE,psiI)));
+    b = rvec.^2 .* (1-(1/linv/linv .* po));
     b = b(b >= 0);
     b = min(sqrt(b));
 
