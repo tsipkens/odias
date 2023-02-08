@@ -33,10 +33,6 @@ PA_nd=3.14159e0; % dimless
 Rs_nd=1e0; % dimless
 dielec=13.5;  % dielectric constant
 
-%-{
-georatio=10;
-STARTnt=1.0d12; ENDnt=1.0d13; TAG='06P76D12';
-%}
 ntvec = [1e12, 1e13];
 
 	
@@ -59,16 +55,22 @@ end
 	
 		
 % Mobility equivalent diameter
-dvec = logspace(log10(4), log10(2e3), 120);
-dvec = dvec([1,40,65]);
+% dvec = logspace(log10(4), log10(2e3), 120);
+% dvec = dvec([1,40,65,110]);
+
+dvec = logspace(log10(4), log10(1.5e3), 120);
 
 meancharge0 = [];
 npmax0 = [];
 collkernel0 = {};
+tools.textbar([0,length(dvec)]);
 for ii = 1:length(dvec)
     
     d_me = dvec(ii) * 1e-9;
     
+    disp(' ');
+    disp('--------------------------------');
+    disp(' ');
     disp('Running:')
     disp(['d_me = ', num2str(d_me * 1e9)]);
     
@@ -100,10 +102,8 @@ for ii = 1:length(dvec)
 	    npmax = 20;
     elseif (d_me*1e9 <= 800)
 	    npmax = 50;
-    elseif (d_me*1e9 <= 1200)
-	    npmax = 100;
     else
-	    npmax = 300;
+	    npmax = 100;
     end
     
     psiEarray = [];
@@ -160,6 +160,9 @@ for ii = 1:length(dvec)
     % Post-process to compute charge fractions average charge.
     meancharge = kernel.collkernel2charge(collkernel, ntvec)
     meancharge0(ii, :) = meancharge;
+
+    tools.textbar([0,length(dvec)]);
+    tools.textbar([ii,length(dvec)]);
 end
 
 
@@ -281,7 +284,7 @@ end
 
 function out = potential(r,psiE,psiI)
 
-out = -psiE./r - psiI./2./r./r./(r.*r-1);
+out = -psiE./r - psiI ./ 2 ./ (r.^2) ./ (r.^2 - 1);
 
 end
 
