@@ -32,8 +32,12 @@ ni = 1;
 PA_nd=3.14159e0; % dimless
 Rs_nd=1e0; % dimless
 dielec=13.5;  % dielectric constant
+
+%-{
 georatio=10;
 STARTnt=1.0d12; ENDnt=1.0d13; TAG='06P76D12';
+%}
+ntvec = [1e12, 1e13];
 
 	
 if strcmp(MODEL, 'MOHSEN')
@@ -55,13 +59,15 @@ end
 	
 		
 % Mobility equivalent diameter
-d_me_array = logspace(log10(4), log10(2e3), 120);
-d_me_array = d_me_array([1,40,65]);
+dvec = logspace(log10(4), log10(2e3), 120);
+dvec = dvec([1,40,65]);
 
-meancharge_d =[];
-for i = 1:length(d_me_array)
+meancharge0 = [];
+npmax0 = [];
+collkernel0 = {};
+for ii = 1:length(dvec)
     
-    d_me = d_me_array(i) * 1e-9;
+    d_me = dvec(ii) * 1e-9;
     
     disp('Running:')
     disp(['d_me = ', num2str(d_me * 1e9)]);
@@ -147,59 +153,13 @@ for i = 1:length(d_me_array)
         collkernel(np + 1) = H*L_H3*f_i/m_i;
 	    
     end
-
-    collkernelratio = collkernel ./ collkernel(1);
     
+    % Store collision kernel for post-processing, if necessary.
+    collkernel0{ii} = collkernel;
     
-    nt = STARTnt;
-    
-    meancharge_nt =[];
-    while (nt <= ENDnt)
-        meancharge=0e0;
-        ssfrac(1) = exp(-collkernel(1) * nt);
-        sscheck = ssfrac(1);
-	    
-        for np=1:npmax
-	        
-	        ssfrac(np + 1) = 0;
-        
-            for nj = 0:np
-	            
-		        dummy1 = diff_product(collkernelratio, npmax, nj, np);
-		        ssfrac(np + 1) = ssfrac(np + 1) + exp(-collkernel(nj + 1)*nt)/dummy1;
-            
-            end
-	        dummy2 = product_term(collkernelratio, npmax, np);
-	        ssfrac(np + 1) = ssfrac(np + 1)*dummy2;
-	        % write(*,*) np, ssfrac(np + 1)
-		        
-	        sscheck = sscheck + ssfrac(np + 1);
-	        meancharge = meancharge + np * ssfrac(np + 1);
-        end
-        
-        nt = nt*georatio;
-
-        meancharge_nt = [meancharge_nt, meancharge];
-    
-    end
-    meancharge_d = [meancharge_d; meancharge_nt]
-
-end
-
-
-
-function out = diff_product(collkernelratio,~,nj,np)
-
-fl = (0:np) ~= nj;
-out = prod(collkernelratio(fl) - collkernelratio(nj + 1));
-
-end
-
-
-function out = product_term(collkernelratio, ~, np)
-
-out = prod(collkernelratio(2:np));
-
+    % Post-process to compute charge fractions average charge.
+    meancharge = kernel.collkernel2charge(collkernel, ntvec)
+    meancharge0(ii, :) = meancharge;
 end
 
 
