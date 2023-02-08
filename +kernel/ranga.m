@@ -105,17 +105,17 @@ for i = 1:length(d_me_array)
 	    psiEarray(np+1) = psiE;
 	    psiIarray(np+1) = psiI;
     
-        if ((psiE == 0) && (psiI == 0))
+	    if ((psiE == 0) && (psiI == 0))
 		    eta_c = 1;
-        else
+	    else
 		    SI = simpsons_cont(0,0.99999e0,1000,psiE,psiI);
 		    eta_c = 1.0/SI;
         end
     
-        if ((psiE == 0) && (psiI == 0))
+	    if ((psiE == 0) && (psiI == 0))
 		    eta_f = 1e0;
 
-        elseif (psiI == 0)
+	    elseif (psiI == 0)
 		    eta_f = exp(psiE);
     
         else
@@ -140,7 +140,12 @@ for i = 1:length(d_me_array)
 	    
     end
     
-    collkernelratio = collkernelratio ./ collkernelratio(1);
+    
+    for np=0:NPMAX
+	    
+	    collkernelratio(np + 1) = collkernel(np + 1)/collkernel(1);
+			    
+    end
     
     
     nt = STARTnt;
@@ -206,28 +211,28 @@ end
 
 function out = eta_fm_attractive(psiE,psiI)
 
-dv = 1e-3; dr = 5e-4;
+dv=1e-3; dr=5e-4;
 
-out = 0e0;
+out=0e0;
 
-rmin = 1+dr;
-rmax = 1e2;
-vmin = -5e0;
-vmax = 2e0;
+rmin=1+dr;
+rmax=1e2;
+vmin=-5e0;
+vmax=2e0;
 
-v = vmin;
-v_prev = vmin-dv;
+v=vmin;
+v_prev=vmin-dv;
 while (v <= vmax)
-	b = 1e99;
-	r = rmax;
-	j = 0;
-	linv = (10^v);
+	b=1e99;
+	r=rmax;
+	j=0;
+	linv=(10^v);
     while (r >= rmin)
         b2 = r * r * (1-(1/linv/linv*potential(r,psiE,psiI)));
         
-        if (b2 >= 0)
-	        b = min(b2^0.5,b);
-	        j = 1;
+        if (b2 >= 0e0)
+	        b=min(b2^0.5,b);
+	        j=1;
         end
         
         r = r-dr;
@@ -253,7 +258,7 @@ end
 
 function out = potential(r,psiE,psiI)
 
-out = -psiE/r - psiI/2/r/r/(r*r-1);
+out = -psiE/r-psiI/2/r/r/(r*r-1);
 
 end
 
@@ -278,14 +283,14 @@ for i = 2:n
     ti=ti+func(a+i*delx,psiE,psiI);
 end
 
-ti=0.5*delx*(func(a,psiE,psiI) + 2*ti + func(b,psiE,psiI));
+ti=0.5*delx*(func(a,psiE,psiI)+2*ti+func(b,psiE,psiI));
 
 end
 
 function out = func(x,psiE,psiI)
 
-term = -psiE*x-psiI/2*(x^4)/(1-x*x);
-out  = exp(term);
+term=-psiE*x-psiI/2*(x^4)/(1-x*x);
+out = exp(term);
 
 end
 
