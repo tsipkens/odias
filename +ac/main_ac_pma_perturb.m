@@ -78,12 +78,13 @@ m_bar_g0 = exp(ac.true([], K0, log(m)));
 
 
 % Plot errors at default.
-figure(1); clf;
+figure(2); clf;
 
 subplot(5, 1, 1:3);
 plot(m_star, m_bar_iac0);
 hold on;
 plot(m_star, m_bar_fkac0);
+plot(m_star, m_bar_fcfac0);
 plot(m_star, m_bar_intac0);
 plot(m_star, m_bar_plac0);
 plot(m_star, m_bar_t0, 'k');
