@@ -126,7 +126,7 @@ for i = 1:length(d_me_array)
     
         else
             if (psiE < 0)
-                eta_fm_repulsive;
+                eta_f = eta_fm_repulsive(psiE, psiI);
             else
                 eta_f = eta_fm_attractive(psiE, psiI);
             end
@@ -209,6 +209,89 @@ function out = Cc(Kn,alpha,beta,gamma)
 out = 1+Kn*(alpha+beta*exp(-gamma/Kn));
 
 end
+
+
+
+function out = eta_fm_repulsive(psiE, psiI)
+
+dv = 1e-4;
+dr = 1e-3;
+
+rmin = log10(1);
+
+if (psiI == 0)
+	rc = 1;
+	ro = 100;
+else
+	rc = newton_raphson_maxima_repulsive([], psiE, psiI);
+end
+
+
+phi_c = pot(rc, psiE, psiI);
+rmax=log10(1d2);
+
+vmin=log10(phi_c^0.5);
+vmax=log10(1d2); % represents infinity
+
+out = 0e0;
+v = vmin;
+v_prev = vmin - dv;
+while (v <= vmax)
+	b = 1e99;
+	r = rmax;
+	linv=(10^v);
+	while (r >= rmin)
+		linr = 10 ^ r;
+		b = min((linr*linr*(1-(1/linv/linv*pot(linr,psiE,psiI))))^0.5,b);
+		r = r - dr;
+	end
+	term = 2*linv*linv*linv*exp(-linv*linv)*b*b*(10^v-10^v_prev);
+	out = out + term;
+
+    v_prev = v;
+    v = v + dv;
+end
+
+end
+
+
+
+function x2 = newton_raphson_maxima_repulsive(~,psiE,psiI)
+
+x1 = 1e2;
+residue = 1e0;
+while (residue > 1e-6) 
+	x2 = x1 - f(x1,psiE,psiI)/df(x1,psiE,psiI);
+	residue = abs((x2-x1)/x1);
+	x1 = x2;
+end
+
+end
+
+function out = f(x,psiE,psiI)
+
+out = psiE*(x^5)-2*psiE*(x^3)+2*psiI*x*x+psiE*x-psiI;
+
+end
+
+function out = df(x,psiE,psiI)
+
+out = 5*psiE*(x^4)-6*psiE*x*x+4*psiI*x+psiE;
+
+end
+
+function out = pot(r,psiE,psiI)
+
+if (psiI == 0e0)
+    out = -psiE/r;
+else
+    out = -psiE/r - psiI/2/r/r/(r*r-1);
+end
+
+end
+
+
+
 
 function out = eta_fm_attractive(psiE,psiI)
 
