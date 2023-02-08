@@ -1,7 +1,7 @@
 
 
 % RANGA A function to determine the average charge on particles.
-%   ORIGINAL AUTHOR: Ranganathan Gopalakrishnan
+%   ORIGINAL AUTHOR: Ranganathan Gopalakrishnan, see Li et al. (2020)
 %   MODIFIED BY: Timothy Sipkens, 2023-02-08
 
 clear;
