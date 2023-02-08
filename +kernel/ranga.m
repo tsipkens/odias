@@ -4,6 +4,8 @@
 %   ORIGINAL AUTHOR: Ranganathan Gopalakrishnan
 %   MODIFIED BY: Timothy Sipkens, 2023-02-08
 
+clear;
+
 % physical constants
 k = 1.381e-23;
 e = 1.602e-19;
@@ -16,7 +18,10 @@ C3 = 3.502;
 C4 = 7.211;
 
 % gas properties
-p = 1.01325e5; T=2.98e2; mwt=2.9e-2; mu=1.81e-5; % Pa, K, kg/mole, Pa.s
+p = 1.01325e5; % Pa
+T = 2.98e2; % K
+mwt = 2.9e-2; % kg/mole
+mu = 1.81e-5; % Pa.s
 alpha = 1.257e0; beta = 4e-1; gamma=1.1e0;
 
 % ion properties
@@ -24,8 +29,10 @@ MODEL = 'SIPKENS'
 ni = 1;
 
 % particle properties
-PA_nd=3.14159e0; Rs_nd=1e0; % dimless, dimless
-dielec=13.5; georatio=10;
+PA_nd=3.14159e0; % dimless
+Rs_nd=1e0; % dimless
+dielec=13.5;  % dielectric constant
+georatio=10;
 STARTnt=1.0d12; ENDnt=1.0d13; TAG='06P76D12';
 
 	
@@ -49,7 +56,7 @@ end
 		
 % Mobility equivalent diameter
 d_me_array = logspace(log10(4), log10(2e3), 120);
-d_me_array = d_me_array([1,40,50,100]);
+d_me_array = d_me_array([40,50,100]);
 
 meancharge_d =[];
 for i = 1:length(d_me_array)
@@ -60,22 +67,22 @@ for i = 1:length(d_me_array)
     disp(['d_me = ', num2str(d_me * 1e9)]);
     
     % calculation of gas properties
-    R_gas=R_univ/mwt; % J/kg/K
-    pho=p/(R_gas*T); % kg/m^3
-    m_gas=mwt/N_av; % mass of gas molecule, kg
-    mts=(8*k*T/pi/m_gas)^0.5; % m/s
-    mfp=mu/(0.499*pho*mts); % hard sphere mean free path, m
+    R_gas = R_univ/mwt; % J/kg/K
+    pho = p/(R_gas*T); % kg/m^3
+    m_gas = mwt/N_av; % mass of gas molecule, kg
+    mts = (8*k*T/pi/m_gas)^0.5; % m/s
+    mfp = mu/(0.499*pho*mts); % hard sphere mean free path, m
     
     % calculation of primary particle radius of aggregate with the same mobility diameter
-    R_me=d_me/2;
+    R_me = d_me/2;
 	    
     rp = R_me;
-    PA=PA_nd*(rp^2); % m^2
-    Rs=Rs_nd*(rp); % m
+    PA = PA_nd*(rp^2); % m^2
+    Rs = Rs_nd*(rp); % m
     
     % calculation of ion properties
-    m_i=mwt_ion/N_av;
-    f_i=ni*e/zp_ion;
+    m_i = mwt_ion/N_av;
+    f_i = ni*e/zp_ion;
     
     if (d_me*1e9 <= 10)
 	    npmax = 5;
