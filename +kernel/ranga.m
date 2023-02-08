@@ -296,36 +296,26 @@ function out = eta_fm_attractive(psiE,psiI)
 
 dv = 1e-3; dr = 5e-4;
 
-out = 0e0;
+out = 0;
 
 rmin = 1+dr;
 rmax = 1e2;
 vmin = -5e0;
 vmax = 2e0;
 
-v = vmin;
-v_prev = vmin-dv;
-while (v <= vmax)
-	b = 1e99;
-	r = rmax;
-	j = 0;
-	linv = (10^v);
-    while (r >= rmin)
-        b2 = r * r * (1-(1/linv/linv*potential(r,psiE,psiI)));
-        
-        if (b2 >= 0)
-	        b = min(b2^0.5,b);
-	        j = 1;
-        end
-        
-        r = r-dr;
-    end
+rvec = rmax:-dr:rmin;
 
-	if (j == 0)
-		b = 1;
-	else
-	    b = max(b, 1);
-	end
+v = vmin;
+v_prev = vmin - dv;
+while (v <= vmax)
+	linv = (10^v);
+    
+    b = rvec .* rvec .* (1-(1/linv/linv .* potential(rvec,psiE,psiI)));
+    b = b(b >= 0);
+    b = min(sqrt(b));
+
+    if isempty(b); b = 1; end
+    b = max(b, 1);
 			
 	term = 2*linv*linv*linv*exp(-linv*linv)*b*b* ...
         (10 ^ v - 10 ^ v_prev);
@@ -341,7 +331,7 @@ end
 
 function out = potential(r,psiE,psiI)
 
-out = -psiE/r - psiI/2/r/r/(r*r-1);
+out = -psiE./r - psiI./2./r./r./(r.*r-1);
 
 end
 
