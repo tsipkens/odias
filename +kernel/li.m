@@ -1,5 +1,4 @@
 
-
 % LI  A function to determine the average charge on particles.
 %   ORIGINAL AUTHOR: Ranganathan Gopalakrishnan and coworkers, see Li et al. (2020)
 %   MODIFIED BY: Timothy Sipkens, 2023-02-08
@@ -58,7 +57,7 @@ end
 % dvec = logspace(log10(4), log10(2e3), 120);
 % dvec = dvec([1,40,65,110]);
 
-dvec = logspace(log10(4), log10(1.5e3), 120);
+dvec = logspace(log10(4), log10(1.5e3), 200);
 
 meancharge0 = [];
 npmax0 = [];
@@ -98,12 +97,14 @@ for ii = 1:length(dvec)
 	    npmax = 5;
     elseif (d_me*1e9 <= 50)
 	    npmax = 10;
-    elseif (d_me*1e9 <= 400)
+    elseif (d_me*1e9 <= 300)
 	    npmax = 20;
     elseif (d_me*1e9 <= 800)
 	    npmax = 50;
-    else
+    elseif (d_me*1e9 <= 1e3)
 	    npmax = 100;
+    else
+	    npmax = 125;
     end
     
     psiEarray = [];
@@ -309,7 +310,7 @@ for i = 2:n
     ti=ti+func(a+i*delx,psiE,psiI);
 end
 
-ti=0.5*delx*(func(a,psiE,psiI) + 2*ti + func(b,psiE,psiI));
+ti = 0.5*delx*(func(a,psiE,psiI) + 2*ti + func(b,psiE,psiI));
 
 end
 
