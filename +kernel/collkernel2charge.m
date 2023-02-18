@@ -30,6 +30,8 @@ for nn=1:length(ntvec)
 	    fq(np + 1) = sum(exp(-collkernel((0:np)+1) .* nt) ./ dummy1(np, (0:np)+1));
         fq(np + 1) = fq(np + 1) * dummy2(np);
         
+        if isnan(fq(np + 1)); fq(np + 1) = 0; end
+
         sscheck = sscheck + fq(np + 1);
         meancharge = meancharge + np * fq(np + 1);
     end
