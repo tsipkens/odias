@@ -57,7 +57,7 @@ end
 % dvec = logspace(log10(4), log10(2e3), 120);
 % dvec = dvec([1,40,65,110]);
 
-dvec = logspace(log10(4), log10(1.5e3), 200);
+dvec = logspace(log10(1), log10(1.5e3), 225);
 
 meancharge0 = [];
 npmax0 = [];
