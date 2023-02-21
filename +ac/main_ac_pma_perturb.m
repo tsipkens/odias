@@ -133,15 +133,16 @@ colormap(flipud(cm(50:end-2,:)));
 %== START: Perturbation analysis =========================================%
 
 % Range of configuration file specifying perturbation scenarios. 
-% cfg = tools.load_config('+ac/config/v3.sig1.json');  % fast
+cfg = tools.load_config('+ac/config/v3.sig1.json');  % fast
 % cfg = tools.load_config('+ac/config/v1.mu.json');  % fast
-cfg = tools.load_config('+ac/config/v1.Rm.json');
+% cfg = tools.load_config('+ac/config/v1.Rm.json');
+% cfg = tools.load_config('+ac/config/v1.mm.b.json');
+% cfg = tools.load_config('+ac/config/v1.nit.b.json');
+% cfg = tools.load_config('+ac/config/v1.eps.b.json');
+
+% cfg = tools.load_config('+ac/config/v2.nit.json');
 % cfg = tools.load_config('+ac/config/v1.mm.rho.json');
 % cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
-% cfg = tools.load_config('+ac/config/v1.nit.b.json');
-% cfg = tools.load_config('+ac/config/v1.nit.b.n175.json');  % sets n = 1.75
-% cfg = tools.load_config('+ac/config/v1.eps.b.json');
-% cfg = tools.load_config('+ac/config/v1.mm.b.json');
 
 % If not a field, both = 0. 
 % This indicate the the AC methods are not being perturbed. 
@@ -181,7 +182,6 @@ for kk=1:sz
         opt = opt0;
         if strcmp(cfg.perturb, 'nit')
             opt.nit = scan_vec(kk) .* 1e13;
-            opt.n = cfg.n;
         end
         if strcmp(cfg.perturb, 'eps0')
             opt.eps = scan_vec(kk);
@@ -229,11 +229,11 @@ for kk=1:sz
         if cfg.both == 1
             % Run the FK algorithm. 
             [m_bar_fkac(kk,:), q_bar_fkac] = ...
-                ac.fkac(m_star, Kq, zvec);
+                ac.fk(m_star, Kq_nn, m, zvec_nn);
             
             % Run the FCFAC algorithm. 
             [m_bar_fcfac(kk,:), q_fcfac] = ...
-                ac.fcfac(m_star, fq, m, zvec);
+                ac.fcf(m_star, fq, m, zvec);
             
             % Run the PLAC algorithm with default settings. 
             [m_bar_plac(kk,:), q_bar_plac] = ...
