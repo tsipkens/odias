@@ -35,7 +35,13 @@ if f_deq
     di = working.dm2deq(di);
 end
 
-[~, qbar] = kernel.tfer_charge(di * 1e-9, qvec, 298, cmodel, opt);
+[fn, qbar] = kernel.tfer_charge(di * 1e-9, qvec, 298, cmodel, opt);
+
+% Overwrite qbar with one computed only with supplied qvec.
+% This allows for avoiding neutrals in the calculation, 
+% which can skew results. 
+fn = fn ./ sum(fn);
+qbar = sum(qvec' .* fn)';
 
 end
 

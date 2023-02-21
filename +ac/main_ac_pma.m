@@ -14,7 +14,7 @@ addpath cmap tfer_pma autils;
 
 % Defaults.
 Rm = 3;
-nit = 4e13;
+nit = 4e12;
 eps = 13.5;
 
 Dm0 = 2.48;
@@ -31,11 +31,11 @@ opt.eps = eps;
 
 % Set transfer function evaluation grid.
 nx = 700;
-m = logspace(-3.5, 3.5, nx)';  % reconstruction points
-m_star = [5e-3, 0.00965967, 0.0443217, 0.101746, 1, 3]';  % mass-to-charge setpoints
+m = logspace(-4, 3.5, nx)';  % reconstruction points
+m_star = [1e-3, 5e-3, 0.00965967, 0.0443217, 0.101746, 1, 3]';  % mass-to-charge setpoints
 nb = length(m_star);
 
-z = 1:300;
+z = 0:300;
 
 
 % Get properties and then update.
@@ -53,12 +53,16 @@ tools.textheader('Computing kernel')
 [K, ~, fq, Kq, qbar0] = kernel.gen_pma(sp, m, d, z, prop, [], 'Fuchs', opt);  % get kernel
 tools.textheader();
 
+Kq_nn = Kq(:,2:end,:);  % no neutrals
+K_nn = squeeze(sum(Kq_nn, 2));
+z_nn = z(2:end);
+
 % Get power law fit.
 [nu, q0] = ac.get_power_law(qbar0, d);
 
 qbarh = q0 .* d .^ nu;
 qbarl = ones(size(d));
-
+    
 n = 3;
 qbart = (qbarh .^ n + 1) .^ (1/n);
 
@@ -66,21 +70,15 @@ xt = ac.get_transition(nu, q0, prop)
 
 
 %%
+% Transfer function plot.
 figure(3);
-zmid = exp((log(z(2:end)) + log(z(1:(end-1)))) / 2);
-zmid = [0.7071, zmid];
-h = pcolor(d, zmid, fq);
-hold on;
-plot(d, qbar0, 'k');
-plot(d, qbarh);
-plot(d, qbarl);
-plot(d, qbart);
-hold off;
-set(gca, 'XScale', 'log', 'YScale', 'log');
+h = pcolor(m_star, m, K');
 set(h, 'EdgeColor', 'none');
-cm = ocean;
-colormap(flipud(cm(50:end-2,:)));
-colorbar;
+set(gca, 'XScale', 'log', 'YScale', 'log');
+
+hold on;
+plot(m_star, m_star, 'r-o');
+hold off;
 
 
 
@@ -107,7 +105,10 @@ table(m_star, m_t, m_t_geo)
 table(m_star, m_iac, q_iac)
 
 % Run FK algorithm.
-[m_fk, q_fk] = ac.fk(m_star, Kq, z);
+[m_fk, q_fk] = ac.fk(m_star, Kq, z);  % including neutrals (incorrect approach)
+table(m_star, m_fk, q_fk)
+
+[m_fk_nn, q_fk_nn] = ac.fk(m_star, Kq_nn, z_nn);
 table(m_star, m_fk, q_fk)
 
 % Run FCFAC algorithm.
@@ -123,15 +124,15 @@ table(m_star, m_intac, q_intac)
 
 
 figure(2);
-plot(m_star, q_iac, 'or');
+plot(m_star, q_iac, 'sr');
 hold on;
-plot(m_star, q_fk, 'o');
+plot(m_star, q_fk_nn, 'o');
 plot(m_star, q_fcf, '^');
 plot(m_star, q_plac, 'ok');
 plot(m, qfun_plac(m), 'k--');
+plot(m_star, q_intac, '<g');
 plot(m, qbar0);  % map mass to charge directly (as opposed to transmitted)
+yline(1, 'k--');
 hold off;
-
 set(gca, 'XScale', 'log', 'YScale', 'log');
-
 

@@ -15,7 +15,11 @@ if isempty(q); q = 0:(size(fq, 2) - 1); end
 
 disp('Computing average charge using full charge fraction (FCF)...');  % add header to console
 
+% fq = [zeros(size(fq, 1), 1), fq];  fq(1,1) = 1;
+% x = [0; x];
+
 % Compute charge fractions at qx*.
+% Interpolation avoids recompute charging model for every x_star. 
 fq_star = interp2(x, q, fq, ...
     x_star .* q, ones(size(x_star)) .* q);
 
@@ -24,7 +28,7 @@ fq_star = interp2(x, q, fq, ...
 qbar = nansum(fq_star .* q ./ ...
     nansum(fq_star, 2), 2);
 
-qbar(nansum(fq_star, 2) < 1) = NaN;  % interpolation failed at these points
+% qbar(nansum(fq_star, 2) < 1) = NaN;  % interpolation failed at these points
 
 xbar = qbar .* x_star;
 
