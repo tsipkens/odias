@@ -3,7 +3,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-05-30
 
-function [nu, q0, p] = get_power_law(qbar0, d)
+function [nu, q0, p, X] = get_power_law(qbar0, d)
 
 % Flag higher charge states. 
 % Do not fit when average charge is less than 4. 
@@ -17,5 +17,7 @@ p = (A' * A) \ (A' * b);  % least-squares
 % Extract power law parameters.
 nu = p(1);
 q0 = exp(p(2));
+
+X = (1 / q0) ^ (1/nu);
 
 end

@@ -36,7 +36,7 @@ nx = 2e3;  nb = 700;
 m = logspace(-5, 2, nx)';  % reconstruction points
 m_star = logspace(-4, 0, nb)';  % mass-to-charge setpoints
 
-zvec = 0:300;
+zvec0 = 0:300;
 
 % Get properties and then update.
 prop0 = kernel.prop_pma;
@@ -50,7 +50,7 @@ d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility r
 % Get Fuchs power law.
 disp('Getting power law for default...');
 sp = get_setpoint(prop0, 'm_star', m_star .* 1e-18, 'Rm', Rm0);
-[K0, ~, fq0, Kq0, qbar0] = kernel.gen_pma(sp, m, d0, zvec, prop0, [], 'Fuchs', opt0);  % get kernel
+[K0, ~, fq0, Kq0, qbar0] = kernel.gen_pma(sp, m, d0, zvec0, prop0, [], 'Fuchs', opt0);  % get kernel
 [nu0, qp0] = ac.get_power_law(qbar0, d0);
 
 
@@ -59,7 +59,7 @@ sp = get_setpoint(prop0, 'm_star', m_star .* 1e-18, 'Rm', Rm0);
 % Kernel ignoring neutrals. 
 Kq0_nn = Kq0(:,2:end,:);  % no neutrals
 K0_nn = squeeze(sum(Kq0_nn, 2));
-zvec_nn = zvec(2:end);
+zvec0_nn = zvec0(2:end);
 
 % "True" average transmitted particle size.
 m_bar_t0 = ac.true([], K0_nn, m);
@@ -71,21 +71,21 @@ m_bar_g0 = exp(ac.true([], K0_nn, log(m)));
 
 % Run the FK algorithm with default settings. 
 [m_bar_fkac0, q_bar_fkac0] = ...
-    ac.fk(m_star, Kq0_nn, m, zvec_nn);
+    ac.fk(m_star, Kq0_nn, m, zvec0_nn);
 [m_bar_fcfac0, q_bar_fcfac0] = ...
-    ac.fcf(m_star, fq0, m, zvec);
+    ac.fcf(m_star, fq0, m, zvec0);
 
 % Run the PLAC algorithm with default settings. 
 [m_bar_plac0, q_bar_plac0] = ...
     ac.plac(m_star, nu0, qp0, prop0);
 [m_bar_intac0, q_bar_intac0] = ...
-    ac.intac(m_star, nu0, qp0, prop0, opt0.n);  % instead solved with IAC
+    ac.intac(m_star, nu0, qp0, prop0, [], opt0.n);  % instead solved with IAC
 
 
 % Plot errors at default.
 figure(2); clf;
 
-subplot(5, 1, 1:2);
+subplot(3, 1, 1);
 plot(m_star, m_bar_iac0);
 hold on;
 plot(m_star, m_bar_fkac0);
@@ -98,7 +98,7 @@ hold off;
 set(gca, 'XScale', 'log', 'YScale', 'log');
 ylim([1e-4, 1e2]);
 
-subplot(5, 1, 3:5);
+subplot(3, 1, 2:3);
 plot(m_star, (m_bar_iac0 - m_bar_t0) ./ m_bar_t0);
 hold on;
 plot(m_star, (m_bar_fkac0 - m_bar_t0) ./ m_bar_t0);
@@ -139,10 +139,14 @@ cfg = tools.load_config('+ac/config/v3.sig1.json');  % fast
 % cfg = tools.load_config('+ac/config/v1.mm.b.json');
 % cfg = tools.load_config('+ac/config/v1.nit.b.json');
 % cfg = tools.load_config('+ac/config/v1.eps.b.json');
+% cfg = tools.load_config('+ac/config/v3.chargemodel.json');  % moderate speed
+% cfg = tools.load_config('+ac/config/v3.q.approx.json');
 
-% cfg = tools.load_config('+ac/config/v2.nit.json');
-% cfg = tools.load_config('+ac/config/v1.mm.rho.json');
-% cfg = tools.load_config('+ac/config/v1.mm.Dm.json');
+% cfg = tools.load_config('+ac/config/v3.nit.json');
+% cfg = tools.load_config('+ac/config/v3.mm.rho.json');
+% cfg = tools.load_config('+ac/config/v3.mm.Dm.json');
+% cfg = tools.load_config('+ac/config/v3.q0.json');
+% cfg = tools.load_config('+ac/config/v3.nu.json');
 
 % If not a field, both = 0. 
 % This indicate the the AC methods are not being perturbed. 
@@ -180,21 +184,24 @@ for kk=1:sz
         
         % For changing charge model parameters.
         opt = opt0;
-        if strcmp(cfg.perturb, 'nit')
-            opt.nit = scan_vec(kk) .* 1e13;
-        end
-        if strcmp(cfg.perturb, 'eps0')
+        if or(strcmp(cfg.perturb, 'nit'), strcmp(cfg.perturb, 'q-approx'))
+            if cfg.both == 1
+                opt.nit = scan_vec(kk) .* 1e12;
+            else
+                opt.nit = nit .* (1 + scan_vec(kk));
+            end
+        elseif strcmp(cfg.perturb, 'eps0')
             opt.eps = scan_vec(kk);
         end
         
         % For changing mass-mobility parameters.
         if contains(cfg.perturb, 'mm')
             if strcmp(cfg.perturb, 'mm.rho')
-                rho100 = scan_vec(kk) .* rho100_0;
+                rho100 = (1 + scan_vec(kk)) .* rho100_0;
                 prop = massmob.add(prop0, ...
                     'Dm', Dm0, 'rho100', rho100);  % universal relation
             elseif strcmp(cfg.perturb, 'mm.Dm')
-                Dm = scan_vec(kk) .* Dm0;
+                Dm = (1 + scan_vec(kk)) .* Dm0;
                 prop = massmob.add(prop0, ...
                     'Dm', Dm, 'rho100', rho100_0);  % universal relation
             elseif strcmp(cfg.perturb, 'mm')
@@ -205,23 +212,45 @@ for kk=1:sz
             end
         end
         
-        % If changing both the IAC and full transfer function outputs. 
-        %{
-        if cfg.both == 0
-            m_bar_iac(kk,:) = m_bar_iac0;
-        else
-            m_bar_iac(kk,:) = ac.iac_m(m_star, prop, [], charge_type, opt);
-        end
-        %}
+        
         
         sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', Rm);
         d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % use mass-mobility relation
-        [K, ~, fq, Kq, qbar] = kernel.gen_pma(sp, m, d, zvec, prop, [], 'Fuchs', opt);  % get kernel
-        [nu, qp] = ac.get_power_law(qbar, d);
 
+        if or(contains(cfg.perturb, 'nu'), contains(cfg.perturb, 'q0'))
+            K = K0;
+            fq = fq0;
+            Kq = Kq0;
+            qbar = qbar0;
+        elseif ~contains(cfg.perturb, 'chargemodel')  % so perturbed something else
+            [K, ~, fq, Kq, qbar] = kernel.gen_pma(sp, m, d, zvec0, prop, [], 'Fuchs', opt);  % get kernel
+        else
+            if strcmp(scan_vec{kk}, 'Fuchs')
+                K = K0;
+                fq = fq0;
+                Kq = Kq0;
+                qbar = qbar0;
+            else
+                [K, ~, fq, Kq, qbar] = kernel.gen_pma(sp, m, d, zvec0, prop, [], scan_vec{kk}, opt);  % get kernel
+            end
+        end
+        
+        [nu, qp, ~, X] = ac.get_power_law(qbar, d);
+
+        if contains(cfg.perturb, 'q0')
+            qp = qp .* (1 + scan_vec(kk));
+        elseif contains(cfg.perturb, 'nu')
+            qp = qp .* X .^ (-nu .* scan_vec(kk));  % anchors expression at X
+            nu = nu .* (1 + scan_vec(kk));
+        elseif strcmp(cfg.perturb, 'q-approx')
+            nu = 1;
+            % qp = exp(-0.031 * log(opt.nit) ^ 2 + 2.16 * log(opt.nit) - 40);
+            qp = (2.51e-18 * opt.nit ^ 2.1914) * exp(-0.0316 * log(opt.nit) ^ 2);
+        end
+        
         Kq_nn = Kq(:,2:end,:);  % no neutrals
         K_nn = squeeze(sum(Kq_nn, 2));
-        zvec_nn = zvec(2:end);
+        zvec0_nn = zvec0(2:end);
         
         % "True" average transmitted particle size.
         m_bar_t(kk,:) = ac.true([], K_nn, m);
@@ -229,11 +258,11 @@ for kk=1:sz
         if cfg.both == 1
             % Run the FK algorithm. 
             [m_bar_fkac(kk,:), q_bar_fkac] = ...
-                ac.fk(m_star, Kq_nn, m, zvec_nn);
+                ac.fk(m_star, Kq_nn, m, zvec0_nn);
             
             % Run the FCFAC algorithm. 
             [m_bar_fcfac(kk,:), q_fcfac] = ...
-                ac.fcf(m_star, fq, m, zvec);
+                ac.fcf(m_star, fq, m, zvec0);
             
             % Run the PLAC algorithm with default settings. 
             [m_bar_plac(kk,:), q_bar_plac] = ...
@@ -262,7 +291,7 @@ for kk=1:sz
             sigk = cfg.sig;
             muk = cfg.scan(kk);
         end
-
+        
         sigk = exp(prop0.zet .* log(sigk));  % convert to mass
         
         % m_bar_iac(kk,:) = m_bar_iac0;

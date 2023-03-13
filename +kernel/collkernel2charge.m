@@ -1,6 +1,6 @@
 
 
-function meancharge0 = collkernel2charge(collkernel, ntvec)
+function [meancharge0, fq] = collkernel2charge(collkernel, ntvec)
 
 % Infer npmax from size of data.
 npmax = length(collkernel) - 1;
@@ -20,20 +20,21 @@ end
 
 % Main loop to compute charge.
 meancharge0 = zeros(1, length(ntvec));
+fq = zeros(npmax, length(ntvec));
 for nn=1:length(ntvec)
     nt = ntvec(nn);
     meancharge = 0;
-    fq(1) = exp(-collkernel(1) * nt);
+    fq(1, nn) = exp(-collkernel(1) * nt);
     sscheck = fq(1);
     
     for np = 1:npmax
-	    fq(np + 1) = sum(exp(-collkernel((0:np)+1) .* nt) ./ dummy1(np, (0:np)+1));
-        fq(np + 1) = fq(np + 1) * dummy2(np);
+	    fq(np + 1, nn) = sum(exp(-collkernel((0:np)+1) .* nt) ./ dummy1(np, (0:np)+1));
+        fq(np + 1, nn) = fq(np + 1) * dummy2(np);
         
-        if isnan(fq(np + 1)); fq(np + 1) = 0; end
+        if isnan(fq(np + 1, nn)); fq(np + 1, nn) = 0; end
 
-        sscheck = sscheck + fq(np + 1);
-        meancharge = meancharge + np * fq(np + 1);
+        sscheck = sscheck + fq(np + 1, nn);
+        meancharge = meancharge + np * fq(np + 1, nn);
     end
 
     meancharge0(nn) = meancharge;

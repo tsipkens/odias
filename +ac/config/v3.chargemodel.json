@@ -1,0 +1,6 @@
+{
+    "perturb": "chargemodel",
+    "both": 1, 
+    "scan": "{'Fuchs', 'Li'}", 
+    "tfer_type": "1C_diff"  // transfer function type
+}

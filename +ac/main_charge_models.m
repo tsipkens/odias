@@ -11,7 +11,6 @@ eps = 13.5;
 
 Dm0 = 2.48;
 rho100_0 = 510;
-Q = 0.9183;
 
 charge_type = 'Fuchs';
 
@@ -42,7 +41,7 @@ qbarl = ones(size(d));
 %%
 
 % White's model.
-qbar_white = working.white(d, nit);
+qbar_white = kernel.white(d, nit);
 
 
 % [qbar_ranga, d_ranga] = working.read_meancharge(...
@@ -50,14 +49,16 @@ qbar_white = working.white(d, nit);
 
 
 load('+working/li_v4_collkernel.mat');
-qbar_ranga = [];
+qbar_li = [];
 for ii=1:length(dvec)
-    qbar_ranga(ii) = kernel.collkernel2charge(collkernel0{ii}, nit);
+    qbar_li(ii) = kernel.collkernel2charge(collkernel0{ii}, nit);
 end
 d_ranga = dvec;
 fl_r = d_ranga <= 1e3;
 d_ranga = d_ranga(fl_r);
-qbar_ranga = qbar_ranga(fl_r);
+qbar_li = qbar_li(fl_r);
+
+[~, qbar_li2] = kernel.tfer_charge(d .* 1e-9, z, [], 'Li', opt);
 
 
 % Plot Fuch's model
@@ -72,7 +73,8 @@ plot(d, qbar0, 'k');
 plot(d, qbarh);
 plot(d, qbarl);
 plot(d, qbar_white, 'm');
-plot(d_ranga, qbar_ranga, 'g-');
+plot(d_ranga, qbar_li, 'g-');
+plot(d, qbar_li2, 'c-');
 hold off;
 set(gca, 'XScale', 'log', 'YScale', 'log');
 cm = ocean;
@@ -82,9 +84,9 @@ ylim([0.1, 300]);
 
 
 % Plot exponent as a function of size.
-p_fuchs = working.logdiff(d, qbar0);
-p_white = working.logdiff(d, qbar_white);
-p_ranga = working.logdiff(d_ranga, qbar_ranga');
+p_fuchs = tools.logdiff(d, qbar0);
+p_white = tools.logdiff(d, qbar_white);
+p_ranga = tools.logdiff(d_ranga, qbar_li');
 
 d_mid = exp((log(d(2:end)) + log(d(1:end-1))) ./ 2);
 d_mid_ranga = exp((log(d_ranga(2:end)) + log(d_ranga(1:end-1))) ./ 2);
