@@ -26,12 +26,11 @@
 %  AUTHOR: Timothy Sipkens, 2018-12-27
 %  ADAPTED FROM: Buckley et al. (2017) and Olfert group
 
-
-function [Omega,Zp_tilde] = tfer_dma(d_star, d, z, prop, opts)
+function [Omega, Zp_tilde] = tfer_dma(d_star, d, z, prop, opts)
 
 
 %-- Parse inputs ---------------------------------------------------------%
-addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
+addpath autils;  % add mat-tfer-pma package to MATLAB path
 
 if ~exist('opts','var'); opts = []; end % initialize options struct
 if ~exist('prop','var'); prop = []; end
@@ -49,28 +48,28 @@ e = 1.6022E-19; % electron charge [C]
 
 %-- Evaluate particle mobility -------------------------------------------%
 if strcmp(opts.solver,'Buckley')
-    [B, Zp] = dm2zp(d,z); % evaluate electrical mobility (Davies)
+    [B, Zp] = dm2zp(d, z);  % evaluate electrical mobility (Davies)
     [~, Zp_star] = dm2zp(d_star);
 else
-    [B, Zp] = dm2zp(d, z, prop.T, prop.p); % evaluate electrical mobility (Kim et al.)
+    [B, Zp] = dm2zp(d, z, prop.T, prop.p);  % evaluate electrical mobility (Kim et al.)
     [~, Zp_star] = dm2zp(d_star, 1, prop.T, prop.p);
 end
-Zp_tilde = Zp ./ Zp_star; % array of non-dimensional mobilities
+Zp_tilde = Zp ./ Zp_star;  % array of non-dimensional mobilities
 
 
 %-- Evaluate transfer function -------------------------------------------%
 if opts.diffusion
     switch opts.solver
-        case 'buckley' % evaluation from Buckley et al.
+        case 'buckley'  % evaluation from Buckley et al.
             D = prop.D(B) .* z; % diffusion
             sigma = (prop.G_DMA*2*pi*prop.L .* D ./ prop.Q_c) .^ 0.5;
             
-        case 'plug' % Plug flow, Stolzenburg, 2018
+        case 'plug'  % plug flow, Stolzenburg, 2018
             V = (prop.Q_c ./ (2*pi .* Zp_star .* prop.L)) .* log(prop.R2 / prop.R1); % Classifier Voltage (TSI DMA 3080 Manual Equation B-5)
             sigma_star = sqrt(((kb*prop.T) / (z*e*V)) * prop.G_DMA); % Stolzenburg Manuscript Equation 20
             sigma = sqrt(sigma_star^2.*Zp_tilde); % Stolzenburg Manuscript Equation 19
             
-        case {'olfert', 'fullydeveloped'} % Olfert laboratory; Fully developed flow, Stolzenburg, 2018
+        case {'olfert', 'fullydeveloped'}  % Olfert laboratory; Fully developed flow, Stolzenburg, 2018
             V = (prop.Q_c ./ (2*pi .* Zp_star .* prop.L)) .* log(prop.R2 / prop.R1); % Classifier Voltage (TSI DMA 3080 Manual Equation B-5)
             sigma_star = sqrt(((kb*prop.T) ./ (z .* e .* V)) .* prop.G_DMA); % Stolzenburg Manuscript Equation 20
             sigma = sqrt(sigma_star .^ 2 .* Zp_tilde); % Stolzenburg Manuscript Equation 19
@@ -81,22 +80,22 @@ if opts.diffusion
             
     end
     
-    epsilon = @(x) x.*erf(x)+exp(-x.^2)./(pi^0.5);
+    epsilon = @(x) x.*erf(x) + exp(-x.^2)./(pi^0.5);
     
     %-- Standard DMA transfer function for diffusion --%
     %	Computes the diffusive transfer function for the DMA
     %	based on Stolzenberg's 1988 analysis. 
-    Omega = sigma./(2^0.5*prop.bet*(1-prop.del)).*(...
-        epsilon((Zp_tilde-1-prop.bet)./(2^0.5*sigma))+...
-        epsilon((Zp_tilde-1+prop.bet)./(2^0.5*sigma))-...
-        epsilon((Zp_tilde-1-prop.bet*prop.del)./(2^0.5*sigma))-...
-        epsilon((Zp_tilde-1+prop.bet*prop.del)./(2^0.5*sigma)));
+    Omega = sigma ./ (2^0.5*prop.bet*(1 - prop.del)).*(...
+        epsilon((Zp_tilde - 1 - prop.bet)./(2^0.5*sigma))+...
+        epsilon((Zp_tilde - 1 + prop.bet)./(2^0.5*sigma))-...
+        epsilon((Zp_tilde - 1 - prop.bet*prop.del)./(2^0.5*sigma))-...
+        epsilon((Zp_tilde - 1 + prop.bet*prop.del)./(2^0.5*sigma)));
     
 else % simpler evaluation for the case of exluding diffusion
-    Omega = 1/(2*prop.bet*(1-prop.del)).*(abs(Zp_tilde-1+prop.bet)+...
-        abs(Zp_tilde-1-prop.bet)-...
-        abs(Zp_tilde-1+prop.bet*prop.del)-...
-        abs(Zp_tilde-1-prop.bet*prop.del));
+    Omega = 1 / (2*prop.bet*(1-prop.del)).*(abs(Zp_tilde - 1 + prop.bet)+...
+        abs(Zp_tilde - 1 - prop.bet) - ...
+        abs(Zp_tilde - 1 + prop.bet * prop.del) - ...
+        abs(Zp_tilde - 1 - prop.bet * prop.del));
 end
 %-------------------------------------------------------------------------%
 

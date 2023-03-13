@@ -51,9 +51,10 @@ end
 
 tools.textbar([0, n_z]);
 for ii=1:n_z  % loop through charge states
-    Omega_ii = f_z(ii,:) .* kernel.tfer_dma( ...
+    Omega_ii = kernel.tfer_dma( ...  % evalute transfer function
         d_star' .* 1e-9, d .* 1e-9, ...
         z(ii), argin_dma{:});
+    Omega_ii = f_z(ii,:) .* Omega_ii;  % incorporate charge fraction
     
     % Remove numerical noise in kernel.
     Omega_ii(Omega_ii<(1e-7.*max(max(Omega_ii)))) = 0;
