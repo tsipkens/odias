@@ -2,6 +2,26 @@
 % INTAC  Interpolation-average charge method.
 %  Requires an iterative method to solve. 
 %  
+%  [XBAR, QBAR] = intac(X_STAR, NU, Q0, ...) computes the average
+%  transmitted particle size/mass (XBAR) and particle charge (QBAR) at the
+%  size/mass-to-charge setpoint X_STAR and where the charging model is
+%  represented with a power law having a prefactor of Q0 and exponent of
+%  NU. Also requires either a struct, provided as BET, or both BET and C0,
+%  as per below. By default, uses an interpolating power of N = 2.5. 
+%  
+%  [XBAR, QBAR] = intac(X_STAR, NU, Q0, BET, C0) adds an exponent BET and
+%  prefactor C0 relating the particle mobility diameter to the
+%  single-particle mass. Not that BET is 1/ZET, where ZET is the
+%  mass-mobility exponent (also denoted as Dm in some works).
+%  
+%  [XBAR, QBAR] = intac(X_STAR, NU, Q0, BET) uses the struct BET, which
+%  must have fields BET.zet, which is the mass-mobility exponent  and is 
+%  equal to 1/BET in the other variant, and BET.k, which is the 
+%  mass-mobility prefactor. 
+%  
+%  [XBAR, QBAR] = intac(..., N) adds an input for the interpolating power.
+%  By default, N = 2.5. 
+%  
 %  AUTHOR: Timothy Sipkens, 2022-05-26
 
 function [xbar, qbar] = intac(x_star, nu, q0, bet, c0, n)
