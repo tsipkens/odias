@@ -1,0 +1,5 @@
+{
+    "perturb": "Rm",
+    "scan": 3, 
+    "tfer_type": "1C_diff"  // transfer function type
+}

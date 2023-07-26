@@ -1,0 +1,6 @@
+{
+    "perturb": "q-approx", 
+    "both": 1, 
+    "scan": [1,4,10,40], 
+    "tfer_type": "1C_diff"  // transfer function type
+}

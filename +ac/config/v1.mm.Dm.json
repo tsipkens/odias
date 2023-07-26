@@ -1,0 +1,5 @@
+{
+    "perturb": "mm.Dm",
+    "scan": [0.8, 0.9, 1, 1.1, 1.2], 
+    "tfer_type": "1C_diff"  // transfer function type
+}

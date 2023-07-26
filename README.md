@@ -7,11 +7,13 @@ This MATLAB program is designed to invert aerosol size distributions for a range
 
 ## Setup
 
-This program has two dependences that are included as git submodules: 
+This program has three dependencies that are included as git submodules: 
 
 1. The **tfer_pma** submodule, available at https://github.com/tsipkens/mat-tfer-pma, contains MATLAB code to compute the transfer function of particle mass analyzers (including the centrifugal particle mass analyzer and aerosol particle mass analyzer) and to compute basic aerosol properties. Functions in this submodule are necessary to compute the kernel (the quantity that related aerosol measurements  by a range of instruments to their underlying particle size distributions). As such, while this package is primarily necessary if considering particle mass analyzer transfer functions, the package also includes basic functions for computing particle mobility necessary for computing the DMA transfer function. 
 
-2. The **cmap** submodule, available at https://github.com/tsipkens/cmap, adds perceptually uniform colormaps to the program. This submodule is optional in that one could also replace references in existing scripts to the colormaps that would otherwise be in that package. 
+2. The **autils** submodule, available at https://github.com/tsipkens/autils, adds utilities for basic aerosol calculations, including size conversions and distribution moment calculations. 
+
+3. The **cmap** submodule, available at https://github.com/tsipkens/cmap, adds perceptually uniform colormaps to the program. This submodule is optional in that one could also replace references in existing scripts to the colormaps that would otherwise be in that package. 
 
 As a result, the folders corresponding to these submodules will initially be empty. Their are multiple routes to downloading these submodules. If using git, one can initially clone the repository using 
 
@@ -19,13 +21,31 @@ As a result, the folders corresponding to these submodules will initially be emp
 git clone git://github.com/tsipkens/odias --recurse-submodules
 ```
 
-which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the `cmap/` and `tfer_pma/` folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
+which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the corresponding folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
 
 ```Matlab
-addpath 'cmap' 'tfer_pma';
+addpath('cmap', 'tfer_pma', 'autils');
 ```
 
 For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
+
+## Packages
+
+Packages refer to folders prefaced with a **+** symbol and are used to group similar functions. Use of functions in these packages requires one to use the package name in the function call. For example, when calling the `tikhonov(...)` function in the **+invert** package, one must use `invert.tikhonov(...)`. Packages include: 
+
+### +kernel
+
+The **+kernel** package, which contains function to evaluate transfer functions and charging fractions that are used to describe classifiers (i.e., build kernels). 
+
+### +invert
+
+The **+invert** package contains methods that can be used to invert data to find size distributions, often by adding prior information to stabalize the inversion (e.g., Twomey-Markowski ([Markowski, 1987][Markowski1987]) and Tikhonov regularization). 
+
+### +ac
+
+The **+ac** package contains methods for computing the average charge and particle size transmitted by classifiers at a given size-to-charge setpoint. This is particularily useful when the full size distribution is not of interest and when using unipolar chargers with a classifier. 
+
+Functions in this package are closely associated with a draft manuscript summarizing average charge (AC) algorithms. The iterative-average charge (IAC) algorithm predates this publication and is first defined in [Corbin et al. (2022)][Corbin2022]. 
 
 ----
 
@@ -45,4 +65,5 @@ We also wish to acknowledge a competing code by Petters available [here][Petters
 [Markowski1987]: https://www.tandfonline.com/doi/abs/10.1080/02786828708959153
 [Sipkens2020]: https://doi.org/10.1016/j.jaerosci.2020.105565
 [Petters2021]: https://amt.copernicus.org/preprints/amt-2021-51/
+[Corbin2022]: https://doi.org/10.1016/j.carbon.2022.02.037
 [mat2d]: https://github.com/tsipkens/mat-2d-aerosol-inversion

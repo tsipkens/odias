@@ -6,3 +6,7 @@
 	path = tfer_pma
 	url = https://github.com/tsipkens/mat-tfer-pma
 	branch = master
+[submodule "autils"]
+	path = autils
+	url = https://github.com/tsipkens/autils
+	branch = main

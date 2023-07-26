@@ -8,12 +8,12 @@ close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
-d_star = logspace(log10(10), log10(1e3), 80)';  % mobility setpoints
+d_star = logspace(log10(13.1), log10(763.5), 114)';  % mobility setpoints
 
 prop = kernel.prop_dma;
 
 
-A = kernel.gen_smps(d_star, d, [], prop);
+A = kernel.gen_dma(d_star, d, [], prop);
 
 
 mu_d = [200, 200/3];
@@ -27,6 +27,7 @@ w_d = 1;
 %}
 
 [b, Lb, x0] = tools.gen_data(A, d, mu_d, s_d, w_d, d_star);
+% b = A * x0; Lb = eye(length(b));
 
 
 %%
@@ -89,7 +90,7 @@ disp(' ');
 
 %-- Exponential distance --%
 disp('Running exponential distance ...');
-lambda_ed = 6e0;
+lambda_ed = 1e1;
 ld = log10(s_d(1));
 [x_ed, ~, ~, Gpo_inv_ed] = ...
     invert.exp_dist(Lb * A, Lb * b, lambda_ed, ld, d);
@@ -110,22 +111,30 @@ figure(2);
 x_tk = x_tk22;
 Gpo_tk = Gpo_tk22;
 
-subplot(2, 2, 1);
+subplot(2, 3, 1);
+tools.plotci(d, x_tk1, Gpo_tk1, x0);
+title('Tikhonov (1st)');
+
+subplot(2, 3, 2);
+tools.plotci(d, x_tk2, Gpo_tk2, x0);
+title('Tikhonov (2nd)');
+
+subplot(2, 3, 3);
 tools.plotci(d, x_tk, Gpo_tk, x0);
 title('Tikhonov (2nd, two-step)');
 
-subplot(2, 2, 2);
+subplot(2, 3, 4);
 tools.plotci(d, x_ed, Gpo_ed, x0);
 title('Exponential distance');
 
-subplot(2, 2, 3);
+subplot(2, 3, 5);
 tools.plotci(d, x_two, [], x0);
 title('Twomey');
 hold on;
 plot(d, xi, 'b--');
 hold off;
 
-subplot(2, 2, 4);
+subplot(2, 3, 6);
 tools.plotci(d, x_twomark, [], x0);
 title('Twomey-Markowski');
 hold on;

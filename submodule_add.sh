@@ -1,9 +1,9 @@
 #!/bin/bash
 #
 # SUBMODULE_ADD
-# A git routine for adding cmap as a submodule into a program.
+# A git routine for adding a submodule into a program.
 # Author:  Timothy Sipkens, 2020-09-17
 #===========================================================#
 
-git submodule add -b master https://github.com/tsipkens/mat-tfer-pma tfer_pma
+git submodule add -b main https://github.com/tsipkens/autils autils
 git submodule init

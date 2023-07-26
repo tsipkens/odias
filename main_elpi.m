@@ -34,6 +34,14 @@ hold off;
 disp(' ');
 
 
+%-- Twomey-Markowski ------%
+disp('Running Twomey-Markowski:');
+xi = invert.get_init(Lb * A, Lb * b, d, d_star);
+x_twomark = invert.twomark(Lb * A, Lb * b, length(xi), xi);
+disp(' ');
+
+
+
 %-- 1st order Tikhonov ----%
 disp('Running Tikhonov (1st) ...');
 lambda_tk1 = 2e1;
@@ -46,7 +54,7 @@ disp(' ');
 
 
 
-%-- 1st order Tikhonov ----%
+%-- 2nd order Tikhonov ----%
 disp('Running Tikhonov (2nd) ...');
 lambda_tk2 = 4e1;
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...

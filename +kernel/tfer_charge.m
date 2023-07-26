@@ -23,13 +23,14 @@ elseif isempty(T)
 end
 
 if ~exist('z','var') % if z is not specified, output for states 0 to 6
-    z = 0:6;
+    z = [];
 elseif isempty(z)
-    z = 0:6;
+    z = (0:6);
 end
 
 if ~exist('model','var'); model = []; end
 if strcmpi(model, 'fuchs'); model = 'f'; end
+if strcmpi(model, 'li'); model = 'l'; end
 if isempty(model)
     model = repmat('w', [1,length(z)]);
     model(abs(z) < 3) = 'g';
@@ -75,8 +76,8 @@ if any(model == 'w')
     if any(abs(z) >= 3) % if charge state is 3 or more
         ind = and(indw, abs(z) >= 3);
 
-        fn(:,ind) = e./sqrt(4*pi*pi*epi*kB*T.*vec_d(:,ind)).*...
-            exp(-(vec_z(:,ind)-2*pi*epi*kB*T*log(Z_Z).*vec_d(:,ind)./e^2).^2./...
+        fn(:,ind) = e./sqrt(4*pi*pi*epi*kB*T.*vec_d(:,ind)) .* ...
+            exp(-(vec_z(:,ind) - 2*pi*epi*kB*T*log(Z_Z).*vec_d(:,ind)./e^2).^2 ./ ...
             (4*pi*epi*kB*T.*vec_d(:,ind)./e^2));
 
         fn(and(vec_d<69.78e-9, abs(vec_z)>=3)) = 0;
@@ -103,7 +104,7 @@ if any(model == 'g')
         fn(:,ind) = exp(exponent);
     end
 end
-qbar = [];  % irrelevant for above models
+qbar = sum(fn .* z', 2) ./ sum(fn, 2);
 
 
 if any(model == 'f')
@@ -136,6 +137,62 @@ if any(model == 'f')
     end
     if length(d)>5; disp(' '); end
 end
+
+
+if any(model == 'l')
+    % Dielectric constant (default from T. Johnson).
+    if ~isfield(opt, 'eps'); eps = 13.5;
+    else; eps = opt.eps; end
+    
+    % ion·s/m3
+    if ~isfield(opt, 'nit'); nit = 1.01e13;
+    else; nit = opt.nit; end
+
+    % If many diameters, create textbar.
+    if length(d)>5
+        disp(' Running Li et al. charging model (interpolated):');
+        tools.textbar([0,length(d)]);
+    end
+
+    % Unpack stored collision kernels.
+    colls = [];
+    in = load('+working/li_v4_collkernel.mat');
+    for ii=1:length(in.dvec)
+        if size(colls, 2) ~= length(in.collkernel0{ii})
+            colls = [colls, zeros(size(colls, 1), ...
+                length(in.collkernel0{ii}) - size(colls, 2))];
+        end
+        colls = cat(1, colls, in.collkernel0{ii});
+    end
+
+    % Main loop over diameters.
+    qbar = zeros(length(d), 1);  % initialize
+    for ii=1:length(d)
+        idx = find(d(ii) * 1e9 < in.dvec, 1);
+
+        if isempty(idx)  % input data is not available
+            fn(ii, :) = 0;  % or NaN
+            continue;
+        end
+
+        coll = exp((log(colls(idx,:)) - log(colls(idx - 1,:))) .* ...
+            (log(d(ii) * 1e9) - log(in.dvec(idx - 1))) ./ ...
+            (log(in.dvec(idx)) - log(in.dvec(idx - 1))) + ...
+            log(colls(idx - 1,:)));
+        
+        [qbar(ii), pz] = kernel.collkernel2charge(coll, nit);
+        
+        z_int = intersect(0:size(colls, 2) - 1, z);
+        z_xor = setxor(0:size(colls, 2) - 1, z);
+
+        fn(ii, z_int + 1) = pz;
+        fn(ii, z_xor + 1) = 0;  % or NaN
+        
+        if length(d)>5; tools.textbar([ii,length(d)]); end
+    end
+    if length(d)>5; disp(' '); end
+end
+
 
 
 fn = fn';

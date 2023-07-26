@@ -5,6 +5,8 @@ function [b, Lb, x0] = gen_data(A, d, mu, s, w, d_star, N)
 if ~exist('w', 'var'); w = []; end
 if isempty(w); w = ones(size(mu)); end
 
+% d_star is OPTIONAL and only used for plotting. 
+% Handle this input accordingly.
 if ~exist('d_star', 'var'); d_star = []; end
 if isempty(d_star); f_plot = 0;
 else; f_plot = 1; end
@@ -23,7 +25,7 @@ if isempty(N); N = 1e3; end
 x0 = zeros(size(d));
 for ii=1:length(mu)
     x0 = x0 + w(ii) .* ...
-        normpdf(log10(d), log10(mu(ii)), log10(s(ii)));
+        normpdf(log(d), log(mu(ii)), log(s(ii))) .*(sqrt(2*pi) .* log(s(ii)));
 end
 
 b0 = A * x0;

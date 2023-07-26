@@ -1,27 +1,28 @@
 
-% MAIN  Inversion of mobility distributions.
-% AUTHOR: Timothy Sipkens, 2020-04-11
-%=========================================================================%
+% MAIN_PMA  Inversion of mobility distributions.
+%  
+%  AUTHOR: Timothy Sipkens, 2020-04-11
 
 clear;
 close all;
-addpath cmap tfer_pma;
+addpath cmap tfer_pma autils;
 
 m = logspace(-3, 2, 500)';  % reconstruction points
 m_star = logspace(-3, 2, 80)';  % mass-to-charge setpoints
 
 prop = kernel.prop_pma;
+prop = massmob.add(prop, 'soot');
 d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % get mobility diameters
 
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', 3);
-Af = kernel.gen_pma(sp, m, d, 1:100, prop, [], 'Fuchs');
-Ab = kernel.gen_pma(sp, m, d, [], prop);
+Af = kernel.gen_pma(sp, m, d, (0:100)', prop, [], 'Fuchs');  % unipolar/Fuchs
+Ab = kernel.gen_pma(sp, m, d, (0:3)', prop);  % bipolar
 
 mu = [1, 0.1];
 s = [2.5, 1.9];
 w = [1, 0.5];
 
-%-{
+%{
 mu = 1;
 s = 2.5;
 w = 1;
@@ -38,7 +39,7 @@ hold on;
 tools.gen_data(Ab, m, mu, s, w, m_star);
 hold off;
 
-A = Af;
+A = Af;  % choose which kernel to use
 [b, Lb, x0] = tools.gen_data(A, m, mu, s, w);
 
 
@@ -71,7 +72,7 @@ disp(' ');
 disp('Running Tikhonov (1st) ...');
 lambda_tk1 = 3.8e1;
 [x_tk1, ~, ~, Gpo_inv_tk1] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, 1);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, 1, 0);
 Gpo_tk1 = inv(Gpo_inv_tk1);
 e.tk1 = (x_tk1 - x0)' * Gpo_inv_tk1 * (x_tk1 - x0);
 tools.textdone();
@@ -82,7 +83,7 @@ disp(' ');
 disp('Running Tikhonov (2nd) ...');
 lambda_tk2 = 1e3;
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, 0);
 Gpo_tk2 = inv(Gpo_inv_tk2);
 e.tk2 = (x_tk2 - x0)' * Gpo_inv_tk2 * (x_tk2 - x0);
 tools.textdone();
@@ -93,7 +94,7 @@ disp(' ');
 disp('Running Tikhonov (2nd, two-step) ...');
 lambda_tk2 = 3e3;
 [x_tk22, ~, ~, Gpo_inv_tk22] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, [], 1);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, [2, 2], 0);
 Gpo_tk22 = inv(Gpo_inv_tk22);
 e.tk22 = (x_tk22 - x0)' * Gpo_inv_tk2 * (x_tk22 - x0);
 tools.textdone();
@@ -102,10 +103,12 @@ disp(' ');
 
 %-- Exponential distance --%
 disp('Running exponential distance ...');
-lambda_ed = 0.9e1;
+lambda_ed = 2e1;
 ld = log10(s(1));
+Lpr_ed = invert.exp_dist_lpr(ld, m, 0);  % generate prior covariance
+Lpr_ed = Lpr_ed;
 [x_ed, ~, ~, Gpo_inv_ed] = ...
-    invert.exp_dist(Lb * A, Lb * b, lambda_ed, ld, m);
+    invert.exp_dist(Lb * A, Lb * b, lambda_ed, Lpr_ed);
 Gpo_ed = inv(Gpo_inv_ed);
 e.ed = (x_ed - x0)' * Gpo_inv_ed * (x_ed - x0);
 tools.textdone();
