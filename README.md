@@ -9,7 +9,7 @@ This MATLAB program is designed to invert aerosol size distributions for a range
 
 This program has three dependencies that are included as git submodules: 
 
-1. The **tfer_pma** submodule, available at https://github.com/tsipkens/mat-tfer-pma, contains MATLAB code to compute the transfer function of particle mass analyzers (including the centrifugal particle mass analyzer and aerosol particle mass analyzer) and to compute basic aerosol properties. Functions in this submodule are necessary to compute the kernel (the quantity that related aerosol measurements  by a range of instruments to their underlying particle size distributions). As such, while this package is primarily necessary if considering particle mass analyzer transfer functions, the package also includes basic functions for computing particle mobility necessary for computing the DMA transfer function. 
+1. The **tfer** submodule, available at https://github.com/tsipkens/tfer, contains MATLAB code to compute transfer functions of various kinds. This is an essential submodule and itself contains the **mat-tfer-pma** submodule available at https://github.com/tsipkens/mat-tfer-pma. 
 
 2. The **autils** submodule, available at https://github.com/tsipkens/autils, adds utilities for basic aerosol calculations, including size conversions and distribution moment calculations. 
 
@@ -24,18 +24,20 @@ git clone git://github.com/tsipkens/odias --recurse-submodules
 which will automatically download the submodules when downloading overall program. Alternatively, the submodules can be downloaded manually from the above sources and placed in the corresponding folders. In either case, to be used directly, these packages should then be added to the Matlab path at the beginning of any script using
 
 ```Matlab
-addpath('cmap', 'tfer_pma', 'autils');
+addpath('cmap', 'autils');
 ```
-
-For **tfer_pma**, functions in the **kernel** package will add this folder to the path automatically, whenever necessary, such that it is not necessary to explicitly include the above command in high level scripts. 
 
 ## Packages
 
 Packages refer to folders prefaced with a **+** symbol and are used to group similar functions. Use of functions in these packages requires one to use the package name in the function call. For example, when calling the `tikhonov(...)` function in the **+invert** package, one must use `invert.tikhonov(...)`. Packages include: 
 
+### +tfer
+
+The **+tfer** package is added as a submodule and contains functions to evaluate transfer functions of classifiers and charging fractions. These can subsequently be used to build kernels. 
+
 ### +kernel
 
-The **+kernel** package, which contains function to evaluate transfer functions and charging fractions that are used to describe classifiers (i.e., build kernels). 
+The **+kernel** package, which contains functions to couple transfer functions and charging fractions from the **+tfer** package to describe systems of classifiers. 
 
 ### +invert
 
