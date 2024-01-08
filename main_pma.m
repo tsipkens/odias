@@ -5,7 +5,7 @@
 
 clear;
 close all;
-addpath cmap tfer_pma autils;
+addpath cmap;
 
 m = logspace(-3, 2, 500)';  % reconstruction points
 m_star = logspace(-3, 2, 80)';  % mass-to-charge setpoints

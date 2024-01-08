@@ -38,7 +38,7 @@ n_i = length(d);
 n_z = length(z);
 
 %== Evaluate particle charging fractions =================================%
-[f_z, qbar] = kernel.tfer_charge(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
+[f_z, qbar] = tfer.charge(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
 
 
 %== Evaluate DMA transfer function =======================================%
@@ -51,7 +51,7 @@ end
 
 tools.textbar([0, n_z]);
 for ii=1:n_z  % loop through charge states
-    Omega_ii = kernel.tfer_dma( ...  % evalute transfer function
+    Omega_ii = tfer.dma( ...  % evalute transfer function
         d_star' .* 1e-9, d .* 1e-9, ...
         z(ii), argin_dma{:});
     Omega_ii = f_z(ii,:) .* Omega_ii;  % incorporate charge fraction

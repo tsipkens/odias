@@ -39,7 +39,7 @@ if isempty(opt); opt = '1C'; end
 % If not given, import default properties of PMA, 
 % as selected by prop_pma function.
 if ~exist('prop','var'); prop = []; end
-if isempty(prop); prop = kernel.prop_pma; end
+if isempty(prop); prop = tfer.prop_pma; end
 
 if ~exist('z','var'); z = []; end
 if isempty(z); z = (1:4)'; end
@@ -47,29 +47,20 @@ if isempty(z); z = (1:4)'; end
 
 
 % Compute charge state.
-[f_z, qbar] = kernel.tfer_charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
+[f_z, qbar] = tfer.charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
 
 % Assign tfer_pma function to use.
 fun = str2func(['tfer_',opt]); % call relevant function from submodule
 
 % For first charge state.
-Lambda = f_z(1,:) .* ...
-    fun(sp, m' .* 1e-18, d' .* 1e-9, z(1), prop); % CPMA transfer function
-if nargout > 3
-    Lambda_z = zeros([size(Lambda), length(z)]);
-    Lambda_z(:, :, 1) = Lambda;
-end
+Lambda_z = tfer.pma(sp, m, d, z, prop, opt);
 
 % Add additional charge states.
-for ii=2:length(z)
-    Lambda_ii = f_z(ii,:) .* ...
-        fun(sp, m' .* 1e-18, d' .* 1e-9, z(ii), prop);
-    Lambda = Lambda + Lambda_ii;
-
-    if nargout > 3
-        Lambda_z(:, :, ii) = Lambda_ii;
-    end
+for ii=1:length(z)
+    Lambda_z(:,:,ii) = f_z(ii,:) .* Lambda_z(:,:,ii);
 end
+Lambda = squeeze(sum(Lambda_z, 3));
+
 if nargout > 3
     Lambda_z = permute(Lambda_z, [1, 3, 2]);
 end
