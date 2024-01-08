@@ -149,7 +149,7 @@ for ii=0:10 % loop through several rows to find a number
     if ~isnan(table2array(ta(1,1))); break; end
 end
 
-opts.DataLines = [idx_0,n-26]; % read in the data
+opts.DataLines = [idx_0(1),n-26]; % read in the data
 ta = readtable(fn, opts, 'ReadVariableNames', false);
 idx_0 = table2array(ta(:,1:idx_endc));
 data = idx_0(:,2:(ncol+1));
