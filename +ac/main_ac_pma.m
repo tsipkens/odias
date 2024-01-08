@@ -8,7 +8,7 @@
 
 clear;
 close all;
-addpath cmap autils;
+addpath cmap autils tfer;
 
 
 
@@ -39,7 +39,7 @@ z = 0:300;
 
 
 % Get properties and then update.
-prop = tfer.prop_pma;
+prop = prop_pma;
 prop = prop_update_flow(prop, Q .* 1.66667e-5);
 prop = massmob.add(prop, ...
 	'Dm', Dm0, 'rho100', rho100_0);  % universal relation
@@ -58,7 +58,7 @@ K_nn = squeeze(sum(Kq_nn, 2));
 z_nn = z(2:end);
 
 % Get power law fit.
-[nu, q0] = ac.get_power_law(qbar0, d);
+[nu, q0] = get_power_law(qbar0, d);
 
 qbarh = q0 .* d .^ nu;
 qbarl = ones(size(d));

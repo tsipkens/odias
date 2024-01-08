@@ -7,7 +7,7 @@
 
 clear;
 close all;
-addpath cmap autils;
+addpath cmap autils tfer;
 
 
 
@@ -39,7 +39,7 @@ m_star = logspace(-4, 0, nb)';  % mass-to-charge setpoints
 zvec0 = 0:300;
 
 % Get properties and then update.
-prop0 = kernel.prop_pma;
+prop0 = prop_pma;
 prop0 = prop_update_flow(prop0, Q .* 1.66667e-5);
 prop0 = massmob.add(prop0, ...
 	'Dm', Dm0, 'rho100', rho100_0);  % universal relation
@@ -51,7 +51,7 @@ d_star = (m_star .* 1e-18 ./ prop0.m0) .^ (1 / prop0.Dm);  % use mass-mobility r
 disp('Getting power law for default...');
 sp = get_setpoint(prop0, 'm_star', m_star .* 1e-18, 'Rm', Rm0);
 [K0, ~, fq0, Kq0, qbar0] = kernel.gen_pma(sp, m, d0, zvec0, prop0, [], 'Fuchs', opt0);  % get kernel
-[nu0, qp0] = ac.get_power_law(qbar0, d0);
+[nu0, qp0] = get_power_law(qbar0, d0);
 
 
 

@@ -23,7 +23,7 @@ d = logspace(0.5, 2.25, nx)';  % mobility diameters (as surrogate for deq), for 
 % Get charge distribution.
 zmax = 100;
 zvec = 0:zmax;
-[fq, qbar0] = charge(d .* 1e-9, zvec, 298, 'Fuchs', opt);
+[fq, qbar0] = charger(d .* 1e-9, zvec, 298, 'Fuchs', opt);
 
 
 % Get power law fit.
