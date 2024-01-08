@@ -36,7 +36,7 @@ if isempty(opt); opt = '1C'; end
 % If not given, import default properties of PMA, 
 % as selected by prop_pma function.
 if ~exist('prop','var'); prop = []; end
-if isempty(prop); prop = tfer.prop_pma; end
+if isempty(prop); prop = prop_pma; end
 
 if ~exist('z','var'); z = []; end
 if isempty(z); z = (1:4)'; end
@@ -44,13 +44,10 @@ if isempty(z); z = (1:4)'; end
 
 
 % Compute charge state.
-[f_z, qbar] = tfer.charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
-
-% Assign tfer_pma function to use.
-fun = str2func(['tfer_',opt]); % call relevant function from submodule
+[f_z, qbar] = charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
 
 % For first charge state.
-Lambda_z = tfer.pma(sp, m, d, z, prop, opt);
+Lambda_z = tfer_pma(sp, m, d, z, prop, opt);
 
 Lambda_z = Lambda_z .* permute(f_z, [3, 2, 1]);  % incorporate charge fraction
 

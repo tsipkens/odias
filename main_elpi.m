@@ -1,12 +1,12 @@
 
 clear;
 close all;
-addpath cmap;
+addpath cmap tfer;
 
 d = logspace(log10(10), log10(1e5), 700)';  % reconstruction points
 
-prop = tfer.prop_elpi;
-[A, d_star] = tfer.elpi(d', prop);  % kernel for ELPI+
+prop = prop_elpi;
+[A, d_star] = tfer_elpi(d', prop);  % kernel for ELPI+
 
 
 

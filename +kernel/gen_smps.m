@@ -34,12 +34,11 @@ if ~iscell(argin_z); argin_z = {argin_z}; end
 
 
 %== Evaluate particle charging fractions =================================%
-[f_z, qbar] = tfer.charge(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
+[f_z, qbar] = charge(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
 
 
 %== Evaluate DMA transfer function =======================================%
-disp('Computing DMA kernel:');
-Omega_z = tfer.dma( ...  % evalute transfer function
+Omega_z = tfer_dma( ...  % evalute transfer function
     d_star' .* 1e-9, d .* 1e-9, ...
     z, argin_dma{:});
 

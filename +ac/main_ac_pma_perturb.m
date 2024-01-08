@@ -7,7 +7,7 @@
 
 clear;
 close all;
-addpath cmap tfer_pma autils;
+addpath cmap autils;
 
 
 

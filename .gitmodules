@@ -6,3 +6,7 @@
 	path = autils
 	url = https://github.com/tsipkens/autils
 	branch = main
+[submodule "tfer"]
+	path = tfer
+	url = https://github.com/tsipkens/tfer
+	branch = main

@@ -1,7 +1,7 @@
 
 clear;
 close all;
-addpath cmap tfer_pma autils;
+addpath cmap autils;
 
 
 % Defaults.
@@ -28,7 +28,7 @@ z = 0:300;
 
 % Compute kernel.
 tools.textheader('Computing kernel')
-[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, z, [], 'Fuchs', opt);
+[fq, qbar0] = tfer.charge(d .* 1e-9, z, [], 'Fuchs', opt);
 tools.textheader();
 
 % Get power law fit.
@@ -41,24 +41,24 @@ qbarl = ones(size(d));
 %%
 
 % White's model.
-qbar_white = kernel.white(d, nit);
+qbar_white = tfer.fun_white(d, nit);
 
 
 % [qbar_ranga, d_ranga] = working.read_meancharge(...
 %     '..\..\Program - Aerosol inversion\ranga-charging-code\v6');
 
 
-load('+working/li_v4_collkernel.mat');
+load('+tfer/li_v4_collkernel.mat');
 qbar_li = [];
 for ii=1:length(dvec)
-    qbar_li(ii) = kernel.collkernel2charge(collkernel0{ii}, nit);
+    qbar_li(ii) = tfer.fun_collkernel2charge(collkernel0{ii}, nit);
 end
 d_ranga = dvec;
 fl_r = d_ranga <= 1e3;
 d_ranga = d_ranga(fl_r);
 qbar_li = qbar_li(fl_r);
 
-[~, qbar_li2] = kernel.tfer_charge(d .* 1e-9, z, [], 'Li', opt);
+[~, qbar_li2] = tfer.charge(d .* 1e-9, z, [], 'Li', opt);
 
 
 % Plot Fuch's model

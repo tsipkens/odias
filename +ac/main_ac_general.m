@@ -23,7 +23,7 @@ d = logspace(0.5, 2.25, nx)';  % mobility diameters (as surrogate for deq), for 
 % Get charge distribution.
 zmax = 100;
 zvec = 0:zmax;
-[fq, qbar0] = kernel.tfer_charge(d .* 1e-9, zvec, 298, 'Fuchs', opt);
+[fq, qbar0] = charge(d .* 1e-9, zvec, 298, 'Fuchs', opt);
 
 
 % Get power law fit.
@@ -73,7 +73,7 @@ eta = -1;%1/2.7;  % power for deq (e.g., ~1/3 for spheres and x = mass)
 x = d .^ (1/eta);
 
 % Assume delta transfer function equally efficient at all sizes.
-qbar_model = @(x, zvec) out2(@kernel.tfer_charge, x .^ eta .* 1e-9, zvec, 298, 'Fuchs', opt);
+qbar_model = @(x, zvec) out2(charge, x .^ eta .* 1e-9, zvec, 298, 'Fuchs', opt);
 
 % [~, q_iac] = ac.iac(x, qbar_model);
 [~, q_plac] = ac.plac(x, nu, q0, eta, c0);

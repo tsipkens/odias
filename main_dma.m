@@ -7,13 +7,13 @@
 
 clear;
 close all;
-addpath cmap;
+addpath cmap tfer;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
 d_star = logspace(log10(13.1), log10(200), 114)';  % mobility setpoints
 % 763.5
 
-prop = tfer.prop_dma;
+prop = prop_dma;
 
 
 A = kernel.gen_smps(d_star, d, [], prop);

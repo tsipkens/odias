@@ -8,7 +8,7 @@
 
 clear;
 close all;
-addpath cmap tfer_pma autils;
+addpath cmap autils;
 
 
 
@@ -39,7 +39,7 @@ z = 0:300;
 
 
 % Get properties and then update.
-prop = kernel.prop_pma;
+prop = tfer.prop_pma;
 prop = prop_update_flow(prop, Q .* 1.66667e-5);
 prop = massmob.add(prop, ...
 	'Dm', Dm0, 'rho100', rho100_0);  % universal relation
