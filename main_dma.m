@@ -8,12 +8,13 @@ close all;
 addpath cmap;
 
 d = logspace(log10(10), log10(1e3), 500)';  % reconstruction points
-d_star = logspace(log10(13.1), log10(763.5), 114)';  % mobility setpoints
+d_star = logspace(log10(13.1), log10(200), 114)';  % mobility setpoints
+% 763.5
 
-prop = kernel.prop_dma;
+prop = tfer.prop_dma;
 
 
-A = kernel.gen_dma(d_star, d, [], prop);
+A = kernel.gen_smps(d_star, d, [], prop);
 
 
 mu_d = [200, 200/3];
@@ -27,6 +28,7 @@ w_d = 1;
 %}
 
 [b, Lb, x0] = tools.gen_data(A, d, mu_d, s_d, w_d, d_star);
+% [b, Lb, x0] = tools.gen_data(A, d, 75, 1.1, w_d, d_star);
 % b = A * x0; Lb = eye(length(b));
 
 

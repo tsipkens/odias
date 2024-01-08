@@ -5,7 +5,8 @@ addpath cmap;
 
 d = logspace(log10(10), log10(1e5), 700)';  % reconstruction points
 
-[A, d_star] = kernel.gen_elpi(d');  % kernel for ELPI+
+prop = tfer.prop_elpi;
+[A, d_star] = tfer.elpi(d', prop);  % kernel for ELPI+
 
 
 
