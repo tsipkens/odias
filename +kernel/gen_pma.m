@@ -44,7 +44,7 @@ if isempty(z); z = (1:4)'; end
 
 
 % Compute charge state.
-[f_z, qbar] = charge(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
+[f_z, qbar] = charger(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
 
 % For first charge state.
 Lambda_z = tfer_pma(sp, m, d, z, prop, opt);

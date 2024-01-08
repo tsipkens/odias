@@ -34,7 +34,7 @@ if ~iscell(argin_z); argin_z = {argin_z}; end
 
 
 %== Evaluate particle charging fractions =================================%
-[f_z, qbar] = charge(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
+[f_z, qbar] = charger(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
 
 
 %== Evaluate DMA transfer function =======================================%
