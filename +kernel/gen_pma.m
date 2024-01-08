@@ -26,9 +26,6 @@
 
 function [Lambda, prop, f_z, Lambda_z, qbar] = gen_pma(sp, m, d, z, prop, opt, varargin)
 
-addpath tfer_pma; % add mat-tfer-pma package to MATLAB path
-
-
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('opt','var'); opt = []; end
 
