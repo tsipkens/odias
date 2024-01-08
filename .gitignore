@@ -8,6 +8,7 @@ suppl\
 
 +working/
 
-*.asv
+config_local/
+config_local\
 
-submodule_add_tfer.sh
+*.asv
