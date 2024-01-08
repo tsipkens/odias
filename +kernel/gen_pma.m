@@ -52,11 +52,9 @@ fun = str2func(['tfer_',opt]); % call relevant function from submodule
 % For first charge state.
 Lambda_z = tfer.pma(sp, m, d, z, prop, opt);
 
-% Add additional charge states.
-for ii=1:length(z)
-    Lambda_z(:,:,ii) = f_z(ii,:) .* Lambda_z(:,:,ii);
-end
-Lambda = squeeze(sum(Lambda_z, 3));
+Lambda_z = Lambda_z .* permute(f_z, [3, 2, 1]);  % incorporate charge fraction
+
+Lambda = sum(Lambda_z, 3);  % sum over multiple charge states
 
 if nargout > 3
     Lambda_z = permute(Lambda_z, [1, 3, 2]);
