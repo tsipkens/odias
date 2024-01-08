@@ -8,9 +8,8 @@
 % 
 % Outputs:
 %   A           Kernel matrix
-%=========================================================================%
 
-function A = gen_1d_bin(vec_b,vec_x)
+function A = gen_bin(vec_b,vec_x)
 
 
 %-- Start evaluate kernel ------------------------------------------------%

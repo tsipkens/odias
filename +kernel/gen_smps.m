@@ -1,5 +1,5 @@
 
-% GEN_DMA  Evaluates the transfer function of a differential mobility analyzer.
+% GEN_SMPS  Evaluates the transfer function of a differential mobility analyzer.
 % 
 %  INPUTS:
 %   d_star              Particle diameter, measurement set point for DMA [m]
@@ -18,7 +18,7 @@
 %  
 %  AUTHOR:	Timothy Sipkens, 2020-03-09
 
-function [Omega, f_z, Omega_z, qbar] = gen_dma(d_star, d, z, argin_dma, argin_z)
+function [Omega, f_z, Omega_z, qbar] = gen_smps(d_star, d, z, argin_dma, argin_z)
 
 
 %-- Parse inputs -----------------%

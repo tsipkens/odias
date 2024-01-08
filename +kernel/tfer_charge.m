@@ -27,6 +27,9 @@ if ~exist('z','var') % if z is not specified, output for states 0 to 6
 elseif isempty(z)
     z = (0:6);
 end
+if size(z,2) > size(z,1)  % transpose depending on the input
+    z = z';
+end
 
 if ~exist('model','var'); model = []; end
 if strcmpi(model, 'fuchs'); model = 'f'; end
