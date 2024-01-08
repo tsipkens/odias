@@ -14,7 +14,7 @@ addpath cmap tfer_pma autils;
 
 % Defaults.
 Rm = 3;
-nit = 4e12;
+nit = 1e12;
 eps = 13.5;
 
 Dm0 = 2.48;
@@ -105,10 +105,10 @@ table(m_star, m_t, m_t_geo)
 table(m_star, m_iac, q_iac)
 
 % Run FK algorithm.
-[m_fk, q_fk] = ac.fk(m_star, Kq, z);  % including neutrals (incorrect approach)
+[m_fk, q_fk] = ac.fk(m_star, Kq, z, pr);  % including neutrals (incorrect approach)
 table(m_star, m_fk, q_fk)
 
-[m_fk_nn, q_fk_nn] = ac.fk(m_star, Kq_nn, z_nn);
+[m_fk_nn, q_fk_nn] = ac.fk(m_star, Kq_nn, z_nn, pr);
 table(m_star, m_fk, q_fk)
 
 % Run FCFAC algorithm.

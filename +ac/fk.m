@@ -8,11 +8,15 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2022-02-25
 
-function [xbar, qbar] = fk(~, Kq, x, q)
+function [xbar, qbar] = fk(~, Kq, q, x)
 
 % Use second dimension of A for charges. 
 if ~exist('q', 'var'); q = []; end
 if isempty(q); q = 0:(size(Kq, 2) - 1); end
+
+% Ignores size distribution.
+if ~exist('x', 'var'); x = []; end
+if isempty(x); x = ones(size(Kq,3),1); end
 
 
 disp('Running FK...');  % add header to console
