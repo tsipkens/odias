@@ -15,8 +15,8 @@ prop = massmob.add(prop, 'soot');
 d = (m .* 1e-18 ./ prop.m0) .^ (1 / prop.Dm);  % get mobility diameters
 
 sp = get_setpoint(prop, 'm_star', m_star .* 1e-18, 'Rm', 3);
-Af = kernel.gen_pma(sp, m, d, (0:100)', prop, [], 'Fuchs');  % unipolar/Fuchs
-Ab = kernel.gen_pma(sp, m, d, (0:3)', prop);  % bipolar
+Af = kernel.gen_pma(sp, m, d, 0:100, prop, [], 'Fuchs');  % unipolar/Fuchs
+Ab = kernel.gen_pma(sp, m, d, 0:3, prop);  % bipolar
 
 mu = [1, 0.1];
 s = [2.5, 1.9];
