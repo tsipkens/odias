@@ -1,6 +1,8 @@
 
 % MAIN  Inversion of mobility distributions.
-% AUTHOR: Timothy Sipkens, 2020-04-11
+%  Considers a truncated size distribution.
+%  
+%  AUTHOR: Timothy Sipkens, 2020-04-11
 %=========================================================================%
 
 clear;
@@ -61,7 +63,7 @@ disp(' ');
 disp('Running Tikhonov (1st) ...');
 lambda_tk1 = 3.8e1;
 [x_tk1, ~, ~, Gpo_inv_tk1] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, 1);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk1, 1, 0);
 Gpo_tk1 = inv(Gpo_inv_tk1);
 e.tk1 = (x_tk1 - x0)' * Gpo_inv_tk1 * (x_tk1 - x0);
 tools.textdone();
@@ -72,7 +74,7 @@ disp(' ');
 disp('Running Tikhonov (2nd) ...');
 lambda_tk2 = 1e3;
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, 0);
 Gpo_tk2 = inv(Gpo_inv_tk2);
 e.tk2 = (x_tk2 - x0)' * Gpo_inv_tk2 * (x_tk2 - x0);
 tools.textdone();
@@ -83,7 +85,7 @@ disp(' ');
 disp('Running Tikhonov (2nd, two-step) ...');
 lambda_tk2 = 3e3;
 [x_tk22, ~, ~, Gpo_inv_tk22] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, [], 1);
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, 0);
 Gpo_tk22 = inv(Gpo_inv_tk22);
 e.tk22 = (x_tk22 - x0)' * Gpo_inv_tk2 * (x_tk22 - x0);
 tools.textdone();
