@@ -18,12 +18,13 @@ prop = prop_dma;
 
 A = kernel.gen_smps(d_star, d, [], prop);
 
-
+%{
 mu_d = [200, 200/3];
 s_d = [1.55, 1.55 / 1.15];
 w_d = [1, 0.5];
+%}
 
-%{
+%-{
 mu_d = 200;
 s_d = 1.2;
 w_d = 1;

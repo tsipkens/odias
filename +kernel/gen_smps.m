@@ -34,12 +34,12 @@ if ~iscell(argin_z); argin_z = {argin_z}; end
 
 
 %== Evaluate particle charging fractions =================================%
-[f_z, qbar] = charger(d .* 1e-9, z, [], argin_z{:}); % get fraction charged for d
+[f_z, qbar] = charger(d, z, [], argin_z{:}); % get fraction charged for d
 
 
 %== Evaluate DMA transfer function =======================================%
 Omega_z = tfer_dma( ...  % evalute transfer function
-    d_star' .* 1e-9, d .* 1e-9, ...
+    d_star', d, ...
     z, argin_dma{:});
 
 Omega_z = Omega_z .* permute(f_z, [3, 2, 1]);  % incorporate charge fraction

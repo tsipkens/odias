@@ -46,8 +46,7 @@ if isempty(z); z = (1:4)'; end
 % Compute charge state.
 [f_z, qbar] = charger(d .* 1e-9, z, [], varargin{:}); % get fraction charged for d
 
-% For first charge state.
-Lambda_z = tfer_pma(sp, m, d, z, prop, opt);
+Lambda_z = tfer_pma(sp, m, d, z, prop, opt);  % PMA transfer function
 
 Lambda_z = Lambda_z .* permute(f_z, [3, 2, 1]);  % incorporate charge fraction
 
