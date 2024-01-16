@@ -18,7 +18,6 @@ x0 = normpdf(log10(d), log10(mu_d), log10(s_d)) + ...
     0.5 .* normpdf(log10(d), log10(mu_d / 5), log10(s_d / 1.15));
 
 b0 = A * x0;
-
 [b, Lb] = tools.get_noise(b0, 1e2, 1e-6);
 
 
