@@ -73,7 +73,7 @@ disp(' ');
 
 %-- 2nd order Tikhonov ----%
 disp('Running Tikhonov (2nd) ...');
-lambda_tk2 = 1e3;
+lambda_tk2 = 8e2;
 [x_tk2, ~, ~, Gpo_inv_tk2] = ...
     invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, 0);
 Gpo_tk2 = inv(Gpo_inv_tk2);
@@ -82,13 +82,13 @@ tools.textdone();
 disp(' ');
 
 
-%-- Two-step 2nd order Tikhonov --%
-disp('Running Tikhonov (2nd, two-step) ...');
-lambda_tk2 = 3e3;
-[x_tk22, ~, ~, Gpo_inv_tk22] = ...
-    invert.tikhonov(Lb * A, Lb * b, lambda_tk2, 2, 0);
-Gpo_tk22 = inv(Gpo_inv_tk22);
-e.tk22 = (x_tk22 - x0)' * Gpo_inv_tk2 * (x_tk22 - x0);
+%-- 3rd order Tikhonov --%
+disp('Running Tikhonov (higher-order) ...');
+lambda_tk3 = 5e3;
+[x_tk3, ~, ~, Gpo_inv_tk3] = ...
+    invert.tikhonov(Lb * A, Lb * b, lambda_tk3, 3, 3);
+Gpo_tk3 = pinv(Gpo_inv_tk3);
+e.tk3 = (x_tk3 - x0)' * Gpo_inv_tk3 * (x_tk3 - x0);
 tools.textdone();
 disp(' ');
 
@@ -113,9 +113,6 @@ e
 %%
 figure(2);
 
-x_tk = x_tk22;
-Gpo_tk = Gpo_tk22;
-
 subplot(2, 3, 1);
 tools.plotci(d, x_tk1, Gpo_tk1, x0);
 title('Tikhonov (1st)');
@@ -125,8 +122,8 @@ tools.plotci(d, x_tk2, Gpo_tk2, x0);
 title('Tikhonov (2nd)');
 
 subplot(2, 3, 3);
-tools.plotci(d, x_tk, Gpo_tk, x0);
-title('Tikhonov (2nd, two-step)');
+tools.plotci(d, x_tk3, Gpo_tk3, x0);
+title('Tikhonov (higher)');
 
 subplot(2, 3, 4);
 tools.plotci(d, x_ed, Gpo_ed, x0);

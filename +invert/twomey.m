@@ -25,32 +25,32 @@ function [x] = twomey(A, b, xi, iter, f_sigma, f_bar)
 if ~exist('iter', 'var'); iter = []; end
 if isempty(iter); iter = 100; end % default of 100 iterations
 
-if ~exist('xi', 'var')
-    xi = ones(size(A,2), 1); % intiate vector of ones if xi is not specified
-end
+% Intiate vector of ones if xi is not specified.
+if ~exist('xi', 'var'); xi = []; end
+if isempty(xi);  xi = ones(size(A,2), 1); end
 x = xi;
 
-% whether to display text-based progress bar
+% Whether to display text-based progress bar.
 if ~exist('f_bar', 'var'); f_bar = []; end
 if isempty(f_bar); f_bar = 0; end
 
-% controls exit conditions
+% Controls exit conditions.
 if ~exist('f_sigma', 'var'); f_sigma = []; end
 if isempty(f_sigma); f_sigma = 1; end
 %-------------------------------------------------------------------------%
 
 
 %-- Start evaluation -----------------------------------------------------%
-s = 1 ./ max(A, [], 2); % factor to scale data and model matrix
+s = 1 ./ max(A, [], 2);  % factor to scale data and model matrix
 s_min = max(max(A, [], 2)) * 1e-10;
 s(max(A, [], 2) < s_min) = 0;
-A = bsxfun(@times, s, A); % scale model matrix
-b = max(b .* s, 0); % remove any negative data, scale data
+A = bsxfun(@times, s, A);  % scale model matrix
+b = max(b .* s, 0);  % remove any negative data, scale data
 
-if f_bar; disp('Twomey progress:'); tools.textbar([0,iter]); end
+if f_bar; disp('Twomey progress:'); tools.textbar([0, iter]); end
     % output textbar for progress
 
-factor = 1; % factor, allows one to decrease step size in Twomey
+lam = 1;  % factor, allows one to decrease step size in Twomey
 
 
 %-- Perform Twomey iterations --------------------------------------------%
@@ -60,19 +60,19 @@ for kk=1:iter % perform multiple Twomey passes
             y = A(ii,:) * x;
             if y~=0 % prevents errors in dividing by zero
                 X = b(ii) ./ y; % calculate weight factor
-                C = 1 + factor .* (X-1) .* A(ii,:)';
-                x = C .* x;
+                C = 1 + lam .* (X - 1) .* A(ii,:)';
+                x = x .* C;
             end
         end
     end
     
-    if f_bar; tools.textbar([kk,iter]); end % outputs progresss
+    if f_bar; tools.textbar([kk, iter]); end % outputs progresss
 
     % Exit conditions if sigma is specified (e.g. Twomey-Markowski)
     if f_sigma
-        if tools.mean_sq_err(A, x, b)<0.6
+        if tools.mean_sq_err(A, x, b) < 0.01
             if f_bar
-                tools.textbar([iter,iter]);
+                tools.textbar([iter, iter]);
                 disp([' Algorithm converged at ', num2str(kk), ' iterations']);
             end
             break;

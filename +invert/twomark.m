@@ -17,7 +17,7 @@
 % 
 %  AUTHOR:  Timothy Sipkens, 2018-12-20
 
-function x = twomark(A, b, n, xi)
+function x = twomark(A, b, n, xi, opt_smooth, Sf)
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('Sf','var')
@@ -26,11 +26,8 @@ elseif isempty(Sf)
     Sf = 1/300;
 end
 
-if ~exist('opt_smooth','var')
-    opt_smooth = 'Buckley';
-elseif isempty(opt_smooth)
-    opt_smooth = 'Buckley';
-end
+if ~exist('opt_smooth','var'); opt_smooth = []; end
+if isempty(opt_smooth); opt_smooth = 2; end
 %-------------------------------------------------------------------------%
 
 iter = 40;  % maximum overall Twomey-Markowski iterations

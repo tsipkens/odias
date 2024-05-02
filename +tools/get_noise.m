@@ -42,7 +42,7 @@ if ~exist('n_tot','var'); n_tot = []; end
 if isempty(n_tot); n_tot = 1; end
 
 if ~exist('gam0','var'); gam0 = []; end
-if isempty(gam0); gam0 = 1e-4; end
+if isempty(gam0); gam0 = 1e-6; end
 
 if ~exist('f_apx','var'); f_apx = []; end
 if isempty(f_apx); f_apx = 1; end

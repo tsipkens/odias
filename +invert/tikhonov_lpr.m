@@ -33,10 +33,10 @@ if isempty(bc); bc = order; end  % neglects boundary conditions
 
 % Choose between order of Tikhonov operator to generate.
 switch order
-    case 0 % 0th order Tikhonov
+    case 0  % 0th order Tikhonov
     	L = speye(x_length);
         
-    case 1 % 1st order Tikhonov
+    case 1  % 1st order Tikhonov
         L = -speye(x_length);
         L = spdiags(ones(x_length, 1), 1, L);
         
@@ -44,9 +44,9 @@ switch order
             L(end,:) = [];
         end
         
-    case 2 % 2nd order Tikhonov
-        L = -speye(x_length);
-        L = spdiags(0.5 .* ones(x_length,2), [-1,1], L);
+    case 2  % 2nd order Tikhonov
+        L = -2 .* speye(x_length);
+        L = spdiags(ones(x_length,2), [-1,1], L);
         
         if bc == 0  % zero
             L(1, 2) = 0;
@@ -58,6 +58,48 @@ switch order
             L(1,:) = [];
             L(end,:) = [];
         end
+        
+    case 3  % 3rd order Tikhonov
+        L = sparse(x_length, x_length);
+        L = spdiags(-1/2 .* ones(x_length,2), -2, L);
+        L = spdiags(ones(x_length,2), -1, L);
+        L = spdiags(-ones(x_length,2), 1, L);
+        L = spdiags(1/2 .* ones(x_length,2), 2, L);
+        
+        if bc == 0  % zero
+            L(1, :) = 0;
+            L(x_length, :) = 0;
+            L(1, 1) = -1;
+            L(end, end) = -1;
+            L(2,:) = [];
+            L(end-1,:) = [];
+        else
+            L(1:2,:) = [];
+            L(end-1:end,:) = [];
+        end
+        
+    case 4  % 4th order Tikhonov
+        L = 6 .* speye(x_length);
+        L = spdiags(ones(x_length,2), -2, L);
+        L = spdiags(-4 .* ones(x_length,2), -1, L);
+        L = spdiags(-4 .* ones(x_length,2), 1, L);
+        L = spdiags(ones(x_length,2), 2, L);
+        
+        if bc == 0  % zero
+            L(1, :) = 0;
+            L(x_length, :) = 0;
+            L(1, 1) = -1;
+            L(end, end) = -1;
+            L(2,:) = [];
+            L(end-1,:) = [];
+        else
+            L(1:2,:) = [];
+            L(end-1:end,:) = [];
+        end
+        
+    case 34  % combined 3rd and 4th order Tikhonov
+        L = [invert.tikhonov_lpr(3, x_length, bc); ...
+             invert.tikhonov_lpr(4, x_length, bc)];
         
     otherwise
         disp('The specified order of Tikhonov is not available.');

@@ -1,4 +1,8 @@
 
+% GET_INIT  Compute an estimate of x to initialize various algorithms.
+%  
+%  AUTHOR: Timothy Sipkens
+
 function xi = get_init(A, b, d, d_star)
 
 % Interpolate from b.

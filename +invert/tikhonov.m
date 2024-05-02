@@ -19,7 +19,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2020-04-11
 
-function [x,D,Lpr0,Gpo_inv] = tikhonov(A, b, lambda, order_L, bc, xi, solver)
+function [x, D, Lpr0, Gpo_inv] = tikhonov(A, b, lambda, order_L, bc, xi, solver)
 
 n = size(A,2);  % length of x
 
@@ -102,7 +102,7 @@ end
 
 %-- Uncertainty quantification -------------------------------------------%
 if nargout>=4
-    Gpo_inv = A'*A + Lpr'*Lpr;
+    Gpo_inv = A' * A + Lpr' * Lpr;
 end
 
 end

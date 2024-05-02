@@ -15,7 +15,7 @@
 %   D       Inverse operator (x = D*[b;0])
 %=========================================================================%
 
-function [x,D] = lsq(A,b,xi,solver)
+function [x,D] = lsq(A, b, xi, solver)
 
 
 %-- Parse inputs ---------------------------------------------------------%
@@ -28,9 +28,9 @@ if isempty(solver); solver = 'interior-point'; end % if computation method not s
 
 %-- Perform least-squares ------------------------------------------------%
 x_length = length(A(1,:));
-x_lb = sparse(x_length,1); % enforce non-negativity
+x_lb = sparse(x_length, 1); % enforce non-negativity
 if ~isempty(xi)
-    xi = max(xi,x_lb); % modify to accommodate bound
+    xi = max(xi, x_lb); % modify to accommodate bound
 end
 
 %== Choose a solver and evaluate =========================================%

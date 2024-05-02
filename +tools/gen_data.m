@@ -30,7 +30,7 @@ end
 
 b0 = A * x0;
 
-[b, Lb] = tools.get_noise(b0, N, 1e-6);
+[b, Lb] = tools.get_noise(b0, N);
 
 
 % Plot data and distribution.
@@ -38,10 +38,11 @@ if f_plot
     d_star2 = exp(log(d_star) - (log(d_star(2)) - log(d_star(1))) ./ 2);  % shifted by 1/2 setpoint
     
     figure(gcf);
-    plot(d_star, b0, '--', 'Color', 0.6.*[1,1,1]);
+    plot(d_star, b0, '-b');
     hold on;
     % plot(d_star, b, 'b.', 'MarkerSize', 10);
-    stairs(d_star2, b, 'b');  % more representative of TSI display
+    stairs(d_star2, b, 'Color', 0.8.*[1,1,1]);  % more representative of TSI display
+    plot(d_star, b, 'b.', 'MarkerSize', 10);
 
     hold off;
     set(gca, 'XScale', 'log');
@@ -49,7 +50,7 @@ if f_plot
 
     limy = ylim();
     hold on;
-    eb = errorbar(d_star, b, 2 ./ (diag(Lb)), '.', 'Color', 0.85.*[1,1,1]);
+    eb = errorbar(d_star, b, 2 ./ (diag(Lb)), 'b', 'LineStyle', 'none', 'Color', 0.8.*[1,1,1]);
     hold off;
     ylim([0, limy(2)]);
     uistack(eb,'bottom')
