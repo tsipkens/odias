@@ -9,7 +9,7 @@
 %                   (OPTIONAL, default is set by invert.tikhonov_lpr)
 %   xi          Initial guess for solver
 %                   (OPTIONAL, default is zeros)
-%   solver      Solver (OPTIONAL, default is 'interior-point')
+%   method      Solver (OPTIONAL, default is 'interior-point')
 %
 %  OUTPUTS:
 %   x           Regularized estimate
@@ -19,7 +19,7 @@
 %  
 %  AUTHOR: Timothy Sipkens, 2020-04-11
 
-function [x, D, Lpr0, Gpo_inv] = tikhonov(A, b, lambda, order_L, bc, xi, solver)
+function [x, D, Lpr0, Gpo_inv] = tikhonov(A, b, lambda, order_L, bc, xi, method)
 
 n = size(A,2);  % length of x
 
@@ -28,7 +28,7 @@ n = size(A,2);  % length of x
 if ~exist('order_L', 'var'); order_L = []; end
 
 if ~exist('xi', 'var'); xi = []; end % if initial guess is not specified
-if ~exist('solver', 'var'); solver = []; end
+if ~exist('method', 'var'); method = []; end
 
 % If boundary conditions not specified, will use default of tikhonov_lpr.
 if ~exist('bc', 'var'); bc = []; end
@@ -69,7 +69,7 @@ Lpr = lambda(1) .* Lpr0;  % incorporate regularization parameter
 pr_length = size(Lpr0,1);
 [x,D] = invert.lsq(...
     [A; Lpr], [b; sparse(pr_length,1)], ...
-    xi, solver);
+    xi, method);
 
 
 %== Mutliple stage Tikhonov ==============================================%
@@ -94,7 +94,7 @@ if n_stages > 1
         D2 = sparse(1:n, 1:n, 1 ./ max(abs(x), 0.01), n, n);
         [x,D] = invert.lsq(...
             [A; Lpr * D2], [b; sparse(pr_length,1)], ...
-            xi, solver);
+            xi, method);
     end
 end
 %=========================================================================%
