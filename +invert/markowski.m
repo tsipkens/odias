@@ -5,10 +5,12 @@
 %  AUTHOR: Timothy Sipkens, 2020-02-06
 %  NOTE: n can be an integer or a Grid
 
-function [x, G] = markowski(A, b, x, n, iter, opt_smooth, ~, ~)
+function [x, G, err] = markowski(A, b, x, n, iter, opt_smooth, ~, ~)
 
 if ~exist('opt_smooth', 'var'); opt_smooth = []; end
 if isempty(opt_smooth); opt_smooth = 3; end
+
+err = [];
 
 if opt_smooth == 3
     G = G3(n);
@@ -31,8 +33,8 @@ while jj<=iter
     jj = jj+1;
 end
 
-disp(['SMOOTHING algorithm did not necessarily converge after ', ...
-    num2str(iter), ' iteration(s).']);
+err = ['SMOOTHING algorithm did not necessarily converge after ', ...
+    num2str(iter), ' iteration(s).'];
 
 end
 
