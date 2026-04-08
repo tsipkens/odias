@@ -7,22 +7,22 @@
 % Inputs:
 %   A       Model matrix
 %   b       Data
-%   xi      Initial guess for solver    (Optional, default is empty)
-%   solver  Solver                      (Optional, default is interior-point)
+%   xi      Initial guess for method    (Optional, default is empty)
+%   method  Method                      (Optional, default is interior-point)
 %
 % Outputs:
 %   x       Regularized estimate
 %   D       Inverse operator (x = D*[b;0])
 %=========================================================================%
 
-function [x,D] = lsq(A, b, xi, solver)
+function [x,D] = lsq(A, b, xi, method)
 
 
 %-- Parse inputs ---------------------------------------------------------%
 if ~exist('xi','var'); xi = []; end % use empty if not specified
-if ~exist('solver','var'); solver = []; end
+if ~exist('method','var'); method = []; end
 
-if isempty(solver); solver = 'interior-point'; end % if computation method not specified
+if isempty(method); method = 'interior-point'; end % if computation method not specified
 %-------------------------------------------------------------------------%
 
 
@@ -33,8 +33,8 @@ if ~isempty(xi)
     xi = max(xi, x_lb); % modify to accommodate bound
 end
 
-%== Choose a solver and evaluate =========================================%
-switch solver
+%== Choose a method and evaluate =========================================%
+switch method
     case 'non-neg' % constrained, iterative linear least squares
         options = optimset('Display','off','TolX',eps*norm(A,1)*length(A));
         x = lsqnonneg(A,b,options);
@@ -50,7 +50,7 @@ switch solver
         D = (A'*A)\A'; % invert combined matrices to get first guess
         x_lb = D*b; % Note: previously, [b;Lx*zeros(x_length,1)]
         
-        options = optimoptions('lsqlin','Algorithm','trust-region-reflective');
+        options = optimoptions('lsqlin','Algorithm','trust-region-reflective','Display','none');
         x = lsqlin(A,b,...
             [],[],[],[],x_lb,[],xi,options);
         
